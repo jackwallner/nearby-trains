@@ -847,40 +847,45 @@
       font-size: 22px;
     }
 
-    /* Hub bar - horizontal scrollable quick-switch */
-    .hub-bar {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 8px 0;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
+    /* Hubs dropdown */
+    .hubs-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      min-width: 260px;
+      z-index: 9999;
+      max-height: 400px;
+      overflow-y: auto;
     }
-    .hub-bar::-webkit-scrollbar { display: none; }
-    .hub-chip {
+    .hubs-dropdown-header {
+      padding: 10px 16px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+    .hub-item {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 6px 12px;
-      background: var(--bg-hover);
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      gap: 10px;
+      padding: 10px 16px;
       cursor: pointer;
-      white-space: nowrap;
-      font-size: 13px;
-      font-weight: 500;
-      transition: border-color 0.2s, background 0.2s;
+      font-size: 14px;
+      transition: background 0.1s;
     }
-    .hub-chip:hover {
-      border-color: var(--accent);
-      background: var(--accent-light);
-    }
-    .hub-chip.active {
-      border-color: var(--accent);
-      background: var(--accent-light);
-      font-weight: 600;
-    }
-    .hub-chip .hub-emoji { font-size: 15px; }
+    .hub-item:hover { background: var(--bg-hover); }
+    .hub-item:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+    .hub-item .hub-emoji { font-size: 18px; width: 24px; text-align: center; }
+    .hub-item .hub-label { font-weight: 500; }
+    .hub-item .hub-detail { font-size: 11px; color: var(--text-muted); }
+    .hub-item.active { background: var(--accent-light); }
+    .hub-item.active .hub-label { color: var(--accent); font-weight: 600; }
 
     /* Feature request modal */
     .feature-request-modal {
@@ -1052,6 +1057,46 @@
           </div>
         </div>
         <div class="header-actions">
+          <button id="btn-hubs" class="btn btn-small" title="Popular Train Hubs">🚉 Hubs</button>
+          <div id="hubs-dropdown" class="hubs-dropdown hidden">
+            <div class="hubs-dropdown-header">Popular Amtrak Hubs</div>
+            <div class="hub-item" data-lat="41.8786" data-lon="-87.6398" data-name="Chicago Union Station">
+              <span class="hub-emoji">🏙️</span>
+              <div><div class="hub-label">Chicago</div><div class="hub-detail">Union Station · Major hub</div></div>
+            </div>
+            <div class="hub-item" data-lat="40.7506" data-lon="-73.9935" data-name="NYC Penn Station">
+              <span class="hub-emoji">🗽</span>
+              <div><div class="hub-label">New York City</div><div class="hub-detail">Penn Station · NEC hub</div></div>
+            </div>
+            <div class="hub-item" data-lat="38.8977" data-lon="-77.0365" data-name="Washington DC">
+              <span class="hub-emoji">🏛️</span>
+              <div><div class="hub-label">Washington DC</div><div class="hub-detail">Union Station · NEC hub</div></div>
+            </div>
+            <div class="hub-item" data-lat="34.0565" data-lon="-118.2340" data-name="LA Union Station">
+              <span class="hub-emoji">🌴</span>
+              <div><div class="hub-label">Los Angeles</div><div class="hub-detail">Union Station · West Coast</div></div>
+            </div>
+            <div class="hub-item" data-lat="39.9566" data-lon="-75.1819" data-name="Philadelphia 30th St">
+              <span class="hub-emoji">🔔</span>
+              <div><div class="hub-label">Philadelphia</div><div class="hub-detail">30th St Station · NEC</div></div>
+            </div>
+            <div class="hub-item" data-lat="45.5289" data-lon="-122.6765" data-name="Portland OR">
+              <span class="hub-emoji">🌲</span>
+              <div><div class="hub-label">Portland</div><div class="hub-detail">Union Station · Cascades</div></div>
+            </div>
+            <div class="hub-item" data-lat="26.1197" data-lon="-80.1448" data-name="Fort Lauderdale">
+              <span class="hub-emoji">☀️</span>
+              <div><div class="hub-label">Fort Lauderdale</div><div class="hub-detail">Brightline · FL hub</div></div>
+            </div>
+            <div class="hub-item" data-lat="38.5845" data-lon="-121.4949" data-name="Sacramento">
+              <span class="hub-emoji">🏔️</span>
+              <div><div class="hub-label">Sacramento</div><div class="hub-detail">Capitol Corridor hub</div></div>
+            </div>
+            <div class="hub-item" data-lat="42.3662" data-lon="-71.0621" data-name="Boston South Station">
+              <span class="hub-emoji">🦞</span>
+              <div><div class="hub-label">Boston</div><div class="hub-detail">South Station · NEC</div></div>
+            </div>
+          </div>
           <button id="btn-feature-request" class="btn btn-small" title="Request a Feature">💡</button>
           <button id="btn-refresh" class="btn btn-small">🔄 Refresh</button>
           <button id="btn-settings" class="btn btn-small">⚙️</button>
@@ -1068,19 +1113,6 @@
       <div id="location-tabs"></div>
       <div id="quick-add-bar" class="hidden"></div>
       <div id="quick-add-results"></div>
-
-      <!-- Hub Quick-Switch Bar -->
-      <div class="hub-bar" id="hub-bar">
-        <div class="hub-chip" data-lat="41.8786" data-lon="-87.6398" data-name="Chicago Union Station"><span class="hub-emoji">🏙️</span> Chicago</div>
-        <div class="hub-chip" data-lat="40.7506" data-lon="-73.9935" data-name="NYC Penn Station"><span class="hub-emoji">🗽</span> NYC</div>
-        <div class="hub-chip" data-lat="38.8977" data-lon="-77.0365" data-name="Washington DC"><span class="hub-emoji">🏛️</span> DC</div>
-        <div class="hub-chip" data-lat="34.0565" data-lon="-118.2340" data-name="LA Union Station"><span class="hub-emoji">🌴</span> LA</div>
-        <div class="hub-chip" data-lat="39.9566" data-lon="-75.1819" data-name="Philadelphia 30th St"><span class="hub-emoji">🔔</span> Philly</div>
-        <div class="hub-chip" data-lat="45.5289" data-lon="-122.6765" data-name="Portland OR"><span class="hub-emoji">🌲</span> Portland</div>
-        <div class="hub-chip" data-lat="26.1197" data-lon="-80.1448" data-name="Fort Lauderdale"><span class="hub-emoji">☀️</span> Ft. Laud</div>
-        <div class="hub-chip" data-lat="38.5845" data-lon="-121.4949" data-name="Sacramento"><span class="hub-emoji">🏔️</span> Sacramento</div>
-        <div class="hub-chip" data-lat="42.3662" data-lon="-71.0621" data-name="Boston South Station"><span class="hub-emoji">🦞</span> Boston</div>
-      </div>
 
       <!-- Stats -->
       <div class="stats-grid">
