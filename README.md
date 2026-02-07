@@ -1,10 +1,12 @@
-# 🚂 Nearby Trains
+# 🚂 Dick Wallner Train Tracker
+
+*In memory of Dick Wallner, who loved trains.*
 
 Track Amtrak, VIA Rail, and Brightline trains near your location in real-time.
 
 **[Live Demo →](https://jackwallner.github.io/nearby-trains/)**
 
-![Nearby Trains](https://img.shields.io/badge/trains-tracked-blue) ![GitHub Pages](https://img.shields.io/badge/hosted-GitHub%20Pages-green) ![No API Key](https://img.shields.io/badge/API%20key-none%20needed-orange)
+![Trains Tracked](https://img.shields.io/badge/trains-tracked-blue) ![GitHub Pages](https://img.shields.io/badge/hosted-GitHub%20Pages-green) ![No API Key](https://img.shields.io/badge/API%20key-none%20needed-orange)
 
 ## Features
 

@@ -1,5 +1,5 @@
 /**
- * Storage Manager - localStorage wrapper for Nearby Trains
+ * Storage Manager - localStorage wrapper for Dick Wallner Train Tracker
  * Stores locations, settings, and train spotting history
  */
 

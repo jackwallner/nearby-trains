@@ -279,6 +279,17 @@ const UI = {
       const color = AmtrakerClient.getStatusColor(train);
       this.elements.heroStatusBadge.style.background = color;
     }
+
+    // Route links
+    const heroLinks = document.getElementById('hero-links');
+    if (heroLinks) {
+      const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
+      const transitDocsURL = AmtrakerClient.getTransitDocsURL(train);
+      heroLinks.innerHTML = `
+        <a href="${amtrakerURL}" target="_blank" rel="noopener" class="btn btn-primary btn-small" style="text-decoration:none;font-size:13px;">🔗 View on Amtraker ↗</a>
+        <a href="${transitDocsURL}" target="_blank" rel="noopener" class="btn btn-small" style="text-decoration:none;font-size:13px;">🗺️ TransitDocs ↗</a>
+      `;
+    }
   },
 
   /**
@@ -358,6 +369,7 @@ const UI = {
             <div class="train-info">
               <span class="train-name">${entry.routeName || 'Unknown'}</span>
               <span class="train-route">#${entry.trainNum} · ${entry.provider || 'Amtrak'} · ${entry.origName || '?'} → ${entry.destName || '?'}</span>
+              <span class="train-route"><a href="https://amtraker.com/trains/${entry.trainNum}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route ↗</a></span>
             </div>
           </div>
           <div class="train-item-right">
