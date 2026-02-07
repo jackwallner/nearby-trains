@@ -26,10 +26,18 @@ const Storage = {
         providers: {
           amtrak: true,
           via: true,
-          brightline: true
+          brightline: true,
+          lirr: true,
+          metroNorth: true
         }
       };
-      return stored ? { ...defaults, ...JSON.parse(stored) } : defaults;
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Merge provider defaults so new providers are enabled
+        if (parsed.providers) parsed.providers = { ...defaults.providers, ...parsed.providers };
+        return { ...defaults, ...parsed };
+      }
+      return defaults;
     } catch {
       return {
         refreshInterval: 60,
@@ -37,7 +45,7 @@ const Storage = {
         nightPause: false,
         nightStart: '23:00',
         nightEnd: '06:00',
-        providers: { amtrak: true, via: true, brightline: true }
+        providers: { amtrak: true, via: true, brightline: true, lirr: true, metroNorth: true }
       };
     }
   },

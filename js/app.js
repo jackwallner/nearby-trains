@@ -140,8 +140,18 @@ const App = {
     try {
       UI.setStatus('loading', 'Fetching trains...');
 
-      // Fetch trains
-      const trains = await AmtrakerClient.getTrainsFlat(settings.providers);
+      // Fetch Amtrak trains + MTA trains in parallel
+      const mtaEnabled = settings.providers.lirr || settings.providers.metroNorth;
+      const [amtrakTrains, mtaTrains] = await Promise.all([
+        AmtrakerClient.getTrainsFlat(settings.providers),
+        mtaEnabled ? MTAClient.getAllTrains({
+          lirr: settings.providers.lirr,
+          metroNorth: settings.providers.metroNorth
+        }) : Promise.resolve([])
+      ]);
+
+      // Merge all trains into a single array
+      const trains = [...amtrakTrains, ...mtaTrains];
 
       // If location changed while we were fetching, discard results
       if (myGeneration !== this.refreshGeneration) {
@@ -574,6 +584,8 @@ const App = {
       if (UI.elements.settingAmtrak) settings.providers.amtrak = UI.elements.settingAmtrak.checked;
       if (UI.elements.settingVia) settings.providers.via = UI.elements.settingVia.checked;
       if (UI.elements.settingBrightline) settings.providers.brightline = UI.elements.settingBrightline.checked;
+      if (UI.elements.settingLirr) settings.providers.lirr = UI.elements.settingLirr.checked;
+      if (UI.elements.settingMetroNorth) settings.providers.metroNorth = UI.elements.settingMetroNorth.checked;
       if (UI.elements.settingNightPause) settings.nightPause = UI.elements.settingNightPause.checked;
 
       Storage.saveSettings(settings);
