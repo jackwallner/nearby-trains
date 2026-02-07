@@ -14,7 +14,8 @@ const App = {
   STATIONS_CACHE_DURATION: 300000, // 5 minutes
 
   /**
-   * Pre-save the top 3 busiest Amtrak hubs as default locations for new users
+   * Pre-save the top 3 busiest Amtrak hubs as default locations for new users.
+   * These appear as tabs alongside whatever location the user picks in the wizard.
    */
   seedDefaultLocations() {
     const existing = Storage.getLocations();
@@ -30,8 +31,8 @@ const App = {
       Storage.saveLocation(loc.name, loc.lat, loc.lon, loc.radius);
     });
 
-    // Set Chicago as default active (busiest hub)
-    Storage.setActiveLocation('Chicago Union Station');
+    // Don't set an active location — let the setup wizard run so
+    // the user picks their own location first
     console.log('🚉 Seeded default hub locations');
   },
 
