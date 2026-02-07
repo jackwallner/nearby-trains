@@ -224,10 +224,18 @@ const UI = {
    */
   updateStats(stats) {
     if (this.elements.activeCount) {
-      this.elements.activeCount.textContent = stats.nearbyCount || 0;
+      if (typeof Effects !== 'undefined') {
+        Effects.countUp(this.elements.activeCount, stats.nearbyCount || 0);
+      } else {
+        this.elements.activeCount.textContent = stats.nearbyCount || 0;
+      }
     }
     if (this.elements.todayCount) {
-      this.elements.todayCount.textContent = stats.spottedToday || 0;
+      if (typeof Effects !== 'undefined') {
+        Effects.countUp(this.elements.todayCount, stats.spottedToday || 0);
+      } else {
+        this.elements.todayCount.textContent = stats.spottedToday || 0;
+      }
     }
     if (this.elements.closestToday) {
       this.elements.closestToday.textContent = stats.closestDistance !== null
@@ -235,9 +243,13 @@ const UI = {
         : '—';
     }
     if (this.elements.avgSpeed) {
-      this.elements.avgSpeed.textContent = stats.avgSpeed !== null
-        ? `${stats.avgSpeed}`
-        : '—';
+      if (typeof Effects !== 'undefined' && stats.avgSpeed !== null) {
+        Effects.countUp(this.elements.avgSpeed, stats.avgSpeed);
+      } else {
+        this.elements.avgSpeed.textContent = stats.avgSpeed !== null
+          ? `${stats.avgSpeed}`
+          : '—';
+      }
     }
     if (this.elements.spottedCount) {
       this.elements.spottedCount.textContent = `${stats.spottedToday || 0} trains`;
@@ -518,27 +530,44 @@ const UI = {
     toast.textContent = message;
     toast.style.cssText = `
       position: fixed;
-      bottom: 60px;
+      bottom: 70px;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(20px) scale(0.8);
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       z-index: 10000;
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       background: ${type === 'error' ? '#dc2626' : type === 'success' ? '#16a34a' : '#3b82f6'};
       color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      letter-spacing: 0.02em;
     `;
 
     document.body.appendChild(toast);
-    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+    });
+
+    // Emit sparkles from toast
+    setTimeout(() => {
+      if (typeof Effects !== 'undefined') {
+        const rect = toast.getBoundingClientRect();
+        Effects.emitSparkles(rect.left + rect.width / 2, rect.top, 8,
+          type === 'success' ? ['#16a34a', '#22c55e', '#4ade80'] :
+          type === 'error' ? ['#dc2626', '#ef4444', '#f87171'] :
+          ['#3b82f6', '#60a5fa', '#93c5fd']);
+      }
+    }, 200);
 
     setTimeout(() => {
       toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
+      toast.style.transform = 'translateX(-50%) translateY(20px) scale(0.8)';
+      setTimeout(() => toast.remove(), 400);
     }, duration);
   },
 

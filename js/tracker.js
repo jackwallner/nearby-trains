@@ -131,6 +131,10 @@ const Tracker = {
     const added = Storage.addSpotting(spottingData);
     if (added) {
       this.session.spotted++;
+      // ✨ Confetti burst for newly spotted train!
+      if (typeof Effects !== 'undefined') {
+        Effects.celebrateNewTrain();
+      }
     }
   },
 

@@ -47,6 +47,9 @@ const App = {
     // Cache DOM elements
     UI.cacheElements();
 
+    // Initialize effects engine
+    Effects.init();
+
     // Check if we have a saved location
     const activeLocation = Storage.getActiveLocation();
 
@@ -126,6 +129,9 @@ const App = {
     this.isRefreshing = true;
     const myGeneration = this.refreshGeneration;
 
+    // Spin the refresh button
+    Effects.spinRefreshButton();
+
     // Use provided location or read from storage
     const activeLocation = forceLocation || Storage.getActiveLocation();
     if (!activeLocation) {
@@ -201,6 +207,16 @@ const App = {
       // Update status
       const trainCount = result.nearby.length;
       UI.setStatus('active', `${trainCount} train${trainCount !== 1 ? 's' : ''} nearby · ${trains.length} total active`);
+
+      // ✨ Celebration effects
+      if (trainCount > 0) {
+        Effects.celebrateTrains(trainCount);
+      }
+      // Confetti on first train of the session
+      if (trainCount > 0 && !this._celebratedFirstTrain) {
+        this._celebratedFirstTrain = true;
+        Effects.celebrateNewTrain();
+      }
 
       console.log(`🔄 Refresh complete: ${trainCount} nearby, ${trains.length} total`);
 
