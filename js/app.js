@@ -61,8 +61,8 @@ const App = {
     // Render location tabs
     this.renderTabs();
 
-    // Highlight active hub chip
-    this.updateHubBar(location.name);
+    // Highlight active hub in dropdown
+    this.updateHubHighlight(location.name);
 
     // Initialize map
     MapManager.init(location.lat, location.lon);
@@ -201,14 +201,14 @@ const App = {
   },
 
   /**
-   * Highlight the active hub chip (if the current location matches a hub)
+   * Highlight the active hub in the dropdown
    */
-  updateHubBar(locationName) {
-    document.querySelectorAll('#hub-bar .hub-chip').forEach(chip => {
-      if (chip.dataset.name === locationName) {
-        chip.classList.add('active');
+  updateHubHighlight(locationName) {
+    document.querySelectorAll('#hubs-dropdown .hub-item').forEach(item => {
+      if (item.dataset.name === locationName) {
+        item.classList.add('active');
       } else {
-        chip.classList.remove('active');
+        item.classList.remove('active');
       }
     });
   },
@@ -429,12 +429,14 @@ const App = {
     // Settings gear — toggle dropdown
     UI.elements.btnSettings?.addEventListener('click', (e) => {
       e.stopPropagation();
+      hubsDropdown?.classList.add('hidden');
       UI.elements.settingsDropdown?.classList.toggle('hidden');
     });
 
-    // Close dropdown on outside click
+    // Close all dropdowns on outside click
     document.addEventListener('click', () => {
       UI.elements.settingsDropdown?.classList.add('hidden');
+      hubsDropdown?.classList.add('hidden');
     });
 
     // Dropdown menu items
@@ -466,15 +468,27 @@ const App = {
       });
     });
 
-    // Hub bar quick-switch chips
-    document.querySelectorAll('#hub-bar .hub-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const lat = parseFloat(chip.dataset.lat);
-        const lon = parseFloat(chip.dataset.lon);
-        const name = chip.dataset.name;
+    // Hubs dropdown toggle
+    const btnHubs = document.getElementById('btn-hubs');
+    const hubsDropdown = document.getElementById('hubs-dropdown');
+    btnHubs?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      UI.elements.settingsDropdown?.classList.add('hidden');
+      hubsDropdown?.classList.toggle('hidden');
+    });
+
+    // Hub item clicks — switch location
+    document.querySelectorAll('#hubs-dropdown .hub-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lat = parseFloat(item.dataset.lat);
+        const lon = parseFloat(item.dataset.lon);
+        const name = item.dataset.name;
         const settings = Storage.getSettings();
+        console.log(`🚉 Switching to hub: ${name} (${lat}, ${lon})`);
         Location.save(name, lat, lon, settings.radius);
         Location.setActive(name);
+        hubsDropdown?.classList.add('hidden');
         this.stationsCache = null;
         this.start({ name, lat, lon, radius: settings.radius });
       });
