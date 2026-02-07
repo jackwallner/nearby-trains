@@ -369,7 +369,7 @@ const UI = {
             <div class="train-info">
               <span class="train-name">${entry.routeName || 'Unknown'}</span>
               <span class="train-route">#${entry.trainNum} · ${entry.provider || 'Amtrak'} · ${entry.origName || '?'} → ${entry.destName || '?'}</span>
-              <span class="train-route"><a href="https://amtraker.com/trains/${entry.trainNum}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route ↗</a></span>
+              <span class="train-route"><a href="${entry.trainID && entry.trainID.includes('-') ? `https://amtraker.com/trains/${entry.trainID.split('-')[0]}/${entry.trainID.split('-')[1]}` : `https://amtraker.com/trains/${entry.trainNum}`}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route ↗</a></span>
             </div>
           </div>
           <div class="train-item-right">

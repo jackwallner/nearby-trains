@@ -624,6 +624,20 @@ const App = {
 
     // ===== SETUP: SHOW SAVED LOCATIONS =====
     const savedLocations = Storage.getLocations();
+
+    // ===== SETUP: SUGGESTED LOCATIONS =====
+    document.querySelectorAll('.suggested-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const lat = parseFloat(card.dataset.lat);
+        const lon = parseFloat(card.dataset.lon);
+        const name = card.dataset.name;
+        const settings = Storage.getSettings();
+        Location.save(name, lat, lon, settings.radius);
+        Location.setActive(name);
+        this.start({ name, lat, lon, radius: settings.radius });
+      });
+    });
+
     if (savedLocations.length > 0) {
       UI.elements.setupSavedSection?.classList.remove('hidden');
       const container = UI.elements.setupSavedLocations;
