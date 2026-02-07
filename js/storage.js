@@ -75,7 +75,6 @@ const Storage = {
     }
 
     localStorage.setItem(this.KEYS.LOCATIONS, JSON.stringify(locations));
-    this.setActiveLocation(name);
     return location;
   },
 
