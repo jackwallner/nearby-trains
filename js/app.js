@@ -14,26 +14,28 @@ const App = {
   STATIONS_CACHE_DURATION: 300000, // 5 minutes
 
   /**
-   * Pre-save the top 3 busiest Amtrak hubs as default locations for new users.
-   * These appear as tabs alongside whatever location the user picks in the wizard.
+   * Add the top 3 Amtrak hubs alongside the user's first location pick.
+   * Called once after the wizard saves the user's chosen location.
    */
-  seedDefaultLocations() {
+  seedDefaultHubs() {
     const existing = Storage.getLocations();
-    if (existing.length > 0) return; // user already has locations
+    const existingNames = new Set(existing.map(l => l.name));
 
-    const defaults = [
+    const hubs = [
       { name: 'Chicago Union Station', lat: 41.8786, lon: -87.6398, radius: 25 },
       { name: 'NYC Penn Station', lat: 40.7506, lon: -73.9935, radius: 15 },
       { name: 'Washington DC', lat: 38.8977, lon: -77.0365, radius: 15 },
     ];
 
-    defaults.forEach(loc => {
-      Storage.saveLocation(loc.name, loc.lat, loc.lon, loc.radius);
+    let added = 0;
+    hubs.forEach(hub => {
+      if (!existingNames.has(hub.name)) {
+        Storage.saveLocation(hub.name, hub.lat, hub.lon, hub.radius);
+        added++;
+      }
     });
 
-    // Don't set an active location — let the setup wizard run so
-    // the user picks their own location first
-    console.log('🚉 Seeded default hub locations');
+    if (added > 0) console.log(`🚉 Added ${added} hub locations`);
   },
 
   /**
@@ -44,9 +46,6 @@ const App = {
 
     // Cache DOM elements
     UI.cacheElements();
-
-    // Seed default locations for new users
-    this.seedDefaultLocations();
 
     // Check if we have a saved location
     const activeLocation = Storage.getActiveLocation();
@@ -414,6 +413,7 @@ const App = {
         const settings = Storage.getSettings();
         Location.save(name, pos.lat, pos.lon, settings.radius);
         Location.setActive(name);
+        this.seedDefaultHubs();
 
         this.start({ name, lat: pos.lat, lon: pos.lon, radius: settings.radius });
 
@@ -440,6 +440,7 @@ const App = {
         const settings = Storage.getSettings();
         Location.save(result.name, result.lat, result.lon, settings.radius);
         Location.setActive(result.name);
+        this.seedDefaultHubs();
         this.start({ name: result.name, lat: result.lat, lon: result.lon, radius: settings.radius });
       });
     });
@@ -471,6 +472,7 @@ const App = {
 
       Location.save(name, lat, lon, radius);
       Location.setActive(name);
+      this.seedDefaultHubs();
 
       this.start({ name, lat, lon, radius });
     });
