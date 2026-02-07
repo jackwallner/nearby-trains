@@ -206,7 +206,10 @@ const App = {
 
       // Update status
       const trainCount = result.nearby.length;
-      UI.setStatus('active', `${trainCount} train${trainCount !== 1 ? 's' : ''} nearby · ${trains.length} total active`);
+      const statusMsg = trainCount > 0
+        ? `${trainCount} train${trainCount !== 1 ? 's' : ''} nearby · ${trains.length} total active`
+        : `${trains.length} active · ${Effects.getIdlePhrase()}`;
+      UI.setStatus('active', statusMsg);
 
       // ✨ Celebration effects
       if (trainCount > 0) {
