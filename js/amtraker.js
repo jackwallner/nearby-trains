@@ -9,7 +9,7 @@ const AmtrakerClient = {
   BASE_URL: 'https://api-v3.amtraker.com/v3',
 
   lastCall: 0,
-  minInterval: 5000, // 5 seconds between calls
+  minInterval: 2000, // 2 seconds between calls
 
   async rateLimit() {
     const now = Date.now();

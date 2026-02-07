@@ -8,6 +8,7 @@ const App = {
   countdownTimer: null,
   countdownValue: 0,
   isRefreshing: false,
+  refreshGeneration: 0,
   stationsCache: null,
   stationsCacheTime: 0,
   STATIONS_CACHE_DURATION: 300000, // 5 minutes
@@ -53,10 +54,20 @@ const App = {
   async start(location) {
     console.log(`📍 Starting at: ${location.name} (${location.lat}, ${location.lon})`);
 
+    // Cancel any in-flight refresh and stop old timers
+    this.stopRefresh();
+    this.isRefreshing = false;
+    this.refreshGeneration++;
+
     // Show main app
     UI.showApp();
     UI.updateLocationName(location.name);
-    UI.setStatus('loading', 'Initializing...');
+    UI.setStatus('loading', `Switching to ${location.name}...`);
+
+    // Clear stale data from previous location immediately
+    UI.updateStats({ nearbyCount: 0, spottedToday: 0, closestDistance: null, avgSpeed: null });
+    UI.updateHeroCard(null);
+    UI.updateHistoryList([]);
 
     // Render location tabs
     this.renderTabs();
@@ -64,12 +75,13 @@ const App = {
     // Highlight active hub in dropdown
     this.updateHubHighlight(location.name);
 
-    // Initialize map
+    // Initialize map at new location
     MapManager.init(location.lat, location.lon);
 
     // Update radius from settings
     const settings = Storage.getSettings();
     MapManager.updateRadius(settings.radius);
+    if (UI.elements.detectionRadius) UI.elements.detectionRadius.textContent = settings.radius;
 
     // Reset tracker
     Tracker.resetSession();
@@ -87,6 +99,7 @@ const App = {
   async refresh() {
     if (this.isRefreshing) return;
     this.isRefreshing = true;
+    const myGeneration = this.refreshGeneration;
 
     const activeLocation = Storage.getActiveLocation();
     if (!activeLocation) {
@@ -101,6 +114,13 @@ const App = {
 
       // Fetch trains
       const trains = await AmtrakerClient.getTrainsFlat(settings.providers);
+
+      // If location changed while we were fetching, discard results
+      if (myGeneration !== this.refreshGeneration) {
+        console.log('⏭️ Discarding stale refresh (location changed)');
+        this.isRefreshing = false;
+        return;
+      }
 
       // Process through tracker
       const result = Tracker.processTrains(
@@ -127,8 +147,14 @@ const App = {
       UI.updateHeroCard(result.closest);
       UI.updateNearbyList(result.nearby);
 
-      // Fetch stations (cached)
+      // Fetch stations (skip cache since location may have changed)
       await this.refreshStations(activeLocation, settings);
+
+      // Check generation again after stations fetch
+      if (myGeneration !== this.refreshGeneration) {
+        this.isRefreshing = false;
+        return;
+      }
 
       // Update history
       const todayHistory = Tracker.getTodayHistory();
@@ -141,6 +167,10 @@ const App = {
       console.log(`🔄 Refresh complete: ${trainCount} nearby, ${trains.length} total`);
 
     } catch (error) {
+      if (myGeneration !== this.refreshGeneration) {
+        this.isRefreshing = false;
+        return;
+      }
       console.error('Refresh error:', error);
       UI.setStatus('error', `Error: ${error.message}`);
       UI.showToast('Failed to fetch train data. Will retry...', 'error');
