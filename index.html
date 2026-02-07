@@ -891,6 +891,580 @@
 
     /* Padding for status bar */
     body { padding-bottom: 60px; }
+
+    /* ===== ✨ PIZZAZZ EFFECTS ===== */
+
+    /* Animated gradient background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(22,163,74,0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0% { opacity: 1; filter: hue-rotate(0deg); }
+      50% { opacity: 0.8; filter: hue-rotate(15deg); }
+      100% { opacity: 1; filter: hue-rotate(-10deg); }
+    }
+
+    body > * { position: relative; z-index: 1; }
+
+    /* Animated gradient header bar */
+    .header {
+      background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.06), rgba(37,99,235,0.08));
+      background-size: 200% 200%;
+      animation: gradientSlide 6s ease infinite;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      border: 1px solid rgba(37,99,235,0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    @keyframes gradientSlide {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Logo bounce + glow */
+    .logo {
+      animation: logoBounce 3s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(37,99,235,0.3), 0 0 40px rgba(37,99,235,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .logo:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 0 30px rgba(37,99,235,0.5), 0 0 60px rgba(37,99,235,0.2);
+    }
+
+    @keyframes logoBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    /* Title shimmer effect */
+    .header-title {
+      background: linear-gradient(90deg, var(--text-primary) 0%, var(--accent) 50%, var(--text-primary) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleShimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes titleShimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* Glassmorphism cards */
+    .stat-card, .current-train, .history-section, .map-section {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.1) inset;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .stat-card, .current-train, .history-section, .map-section {
+        background: rgba(30,41,59,0.7);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+      }
+    }
+
+    /* Card hover lift */
+    .stat-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(37,99,235,0.12), 0 0 0 1px rgba(37,99,235,0.15) inset;
+    }
+
+    .current-train:hover, .history-section:hover, .map-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(37,99,235,0.1) inset;
+    }
+
+    /* Staggered entrance animations */
+    .stats-grid .stat-card { opacity: 0; animation: cardEntrance 0.6s ease forwards; }
+    .stats-grid .stat-card:nth-child(1) { animation-delay: 0.05s; }
+    .stats-grid .stat-card:nth-child(2) { animation-delay: 0.12s; }
+    .stats-grid .stat-card:nth-child(3) { animation-delay: 0.19s; }
+    .stats-grid .stat-card:nth-child(4) { animation-delay: 0.26s; }
+
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .current-train { opacity: 0; animation: slideUp 0.7s ease 0.3s forwards; }
+    .map-section { opacity: 0; animation: slideUp 0.7s ease 0.4s forwards; }
+    .history-section { opacity: 0; animation: slideUp 0.7s ease 0.5s forwards; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stat value count-up glow */
+    .stat-value {
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .stat-value.counting {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(37,99,235,0.4);
+    }
+
+    /* Stat card accent stripe */
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #7c3aed, var(--accent));
+      background-size: 200% 100%;
+      animation: gradientSlide 3s ease infinite;
+    }
+
+    .stat-card:nth-child(2)::before {
+      background: linear-gradient(90deg, var(--success), #06b6d4, var(--success));
+      background-size: 200% 100%;
+    }
+
+    .stat-card:nth-child(3)::before {
+      background: linear-gradient(90deg, var(--warning), #f97316, var(--warning));
+      background-size: 200% 100%;
+    }
+
+    .stat-card:nth-child(4)::before {
+      background: linear-gradient(90deg, #7c3aed, #ec4899, #7c3aed);
+      background-size: 200% 100%;
+    }
+
+    /* Enhanced radar with rings */
+    .radar {
+      box-shadow: 0 0 30px rgba(37,99,235,0.2), 0 0 60px rgba(37,99,235,0.08);
+      animation: radarPulse 2s ease-in-out infinite;
+    }
+
+    .radar::before {
+      content: '';
+      position: absolute;
+      inset: -15px;
+      border-radius: 50%;
+      border: 1px solid rgba(37,99,235,0.2);
+      animation: radarRing 2s ease-out infinite;
+    }
+
+    .radar::after {
+      content: '';
+      position: absolute;
+      inset: -30px;
+      border-radius: 50%;
+      border: 1px solid rgba(37,99,235,0.1);
+      animation: radarRing 2s ease-out infinite 0.5s;
+    }
+
+    @keyframes radarPulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(37,99,235,0.2), 0 0 60px rgba(37,99,235,0.08); }
+      50% { box-shadow: 0 0 40px rgba(37,99,235,0.35), 0 0 80px rgba(37,99,235,0.15); }
+    }
+
+    @keyframes radarRing {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* Hero card glow when train is near */
+    .train-hero.active {
+      animation: heroReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes heroReveal {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .train-hero-name {
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Status badge pulse */
+    .train-status-badge {
+      animation: badgePulse 2s ease-in-out infinite;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Hero stats shimmer border */
+    .train-hero-stat {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+      transition: transform 0.2s;
+    }
+
+    .train-hero-stat:hover {
+      transform: scale(1.05);
+    }
+
+    .train-hero-stat::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(37,99,235,0.1), transparent, rgba(124,58,237,0.1), transparent);
+      animation: statSpin 4s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes statSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Route arrow animation */
+    .train-route-arrow {
+      display: inline-block;
+      animation: arrowBounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes arrowBounce {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
+    }
+
+    /* Train history items slide in */
+    .train-item {
+      animation: listSlideIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .train-item:nth-child(1) { animation-delay: 0s; }
+    .train-item:nth-child(2) { animation-delay: 0.04s; }
+    .train-item:nth-child(3) { animation-delay: 0.08s; }
+    .train-item:nth-child(4) { animation-delay: 0.12s; }
+    .train-item:nth-child(5) { animation-delay: 0.16s; }
+    .train-item:nth-child(6) { animation-delay: 0.20s; }
+    .train-item:nth-child(7) { animation-delay: 0.24s; }
+    .train-item:nth-child(8) { animation-delay: 0.28s; }
+    .train-item:nth-child(9) { animation-delay: 0.32s; }
+    .train-item:nth-child(10) { animation-delay: 0.36s; }
+
+    @keyframes listSlideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Train icon spin on hover */
+    .train-icon {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .train-item:hover .train-icon {
+      transform: rotate(15deg) scale(1.15);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+    }
+
+    /* Location tabs glow & slide */
+    .location-tab {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .location-tab::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .location-tab:hover::before {
+      left: 100%;
+    }
+
+    .location-tab.active {
+      box-shadow: 0 4px 16px rgba(37,99,235,0.35);
+      transform: scale(1.05);
+    }
+
+    .location-tab:hover:not(.active) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    /* Buttons — ripple effect prep & hover glow */
+    .btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.97);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+    }
+
+    /* Ripple effect on buttons */
+    .btn .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      transform: scale(0);
+      animation: rippleEffect 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes rippleEffect {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* Modal entrance animations */
+    .modal-overlay {
+      animation: modalBgIn 0.3s ease;
+    }
+
+    .modal-overlay .modal {
+      animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalBgIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: scale(0.8) translateY(40px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Feature request modal gets the same */
+    .feature-request-modal .feature-request-form {
+      animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Status bar glow */
+    .status-bar {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background: rgba(255,255,255,0.8);
+      border-top: 1px solid rgba(37,99,235,0.1);
+      transition: background 0.3s;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .status-bar {
+        background: rgba(15,23,42,0.85);
+      }
+    }
+
+    .status-indicator.success {
+      box-shadow: 0 0 8px var(--success), 0 0 16px rgba(22,163,74,0.3);
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    .status-indicator.loading {
+      box-shadow: 0 0 8px var(--warning), 0 0 16px rgba(245,158,11,0.3);
+    }
+
+    .status-indicator.error {
+      box-shadow: 0 0 8px var(--danger), 0 0 16px rgba(220,38,38,0.3);
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 8px var(--success), 0 0 16px rgba(22,163,74,0.3); }
+      50% { box-shadow: 0 0 12px var(--success), 0 0 24px rgba(22,163,74,0.5); }
+    }
+
+    /* Map section shine effect on header */
+    .map-header {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-header::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: mapShine 5s ease-in-out infinite;
+    }
+
+    @keyframes mapShine {
+      0%, 100% { left: -100%; }
+      50% { left: 150%; }
+    }
+
+    /* Suggested location cards pop */
+    .suggested-card {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .suggested-card:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.15);
+    }
+
+    .suggested-card .suggested-emoji {
+      transition: transform 0.3s;
+    }
+
+    .suggested-card:hover .suggested-emoji {
+      transform: scale(1.3) rotate(-5deg);
+    }
+
+    /* Setup wizard entrance */
+    .setup-container {
+      animation: setupEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes setupEntrance {
+      from { opacity: 0; transform: translateY(60px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .setup-section {
+      opacity: 0;
+      animation: setupSectionIn 0.6s ease forwards;
+    }
+
+    .setup-section:nth-child(1) { animation-delay: 0.2s; }
+    .setup-section:nth-child(2) { animation-delay: 0.35s; }
+    .setup-section:nth-child(3) { animation-delay: 0.5s; }
+    .setup-section:nth-child(4) { animation-delay: 0.65s; }
+
+    @keyframes setupSectionIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Next station badge glow */
+    .next-station {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .next-station::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; right: 0; bottom: 0;
+      width: 50%;
+      background: linear-gradient(90deg, transparent, rgba(37,99,235,0.08), transparent);
+      animation: mapShine 4s ease-in-out infinite;
+    }
+
+    /* Refresh button spin on click */
+    .btn-refresh-spinning {
+      animation: spinOnce 0.8s ease;
+    }
+
+    @keyframes spinOnce {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Sparkle container */
+    #sparkle-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Toast upgrade */
+    @keyframes toastIn {
+      from { transform: translateX(-50%) translateY(20px) scale(0.8); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+    }
+
+    @keyframes toastOut {
+      from { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+      to { transform: translateX(-50%) translateY(20px) scale(0.8); opacity: 0; }
+    }
+
+    /* Dropdown entrance */
+    .dropdown:not(.hidden) {
+      animation: dropdownIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes dropdownIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Checkbox fancy toggle feel */
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+      transition: transform 0.2s;
+    }
+
+    input[type="checkbox"]:hover {
+      transform: scale(1.15);
+    }
+
+    /* Scrollbar style */
+    .train-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .train-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .train-list::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
+      opacity: 0.5;
+    }
+
+    /* Quick-add bar glow */
+    #quick-add-bar input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15), 0 0 20px rgba(37,99,235,0.1);
+    }
+
+    /* Selection color */
+    ::selection {
+      background: rgba(37,99,235,0.3);
+      color: var(--text-primary);
+    }
   </style>
 </head>
 <body>
@@ -1310,6 +1884,9 @@
     </div>
   </div>
 
+  <!-- Sparkle Canvas -->
+  <canvas id="sparkle-canvas"></canvas>
+
   <!-- Status Bar -->
   <div class="status-bar">
     <div id="status-indicator" class="status-indicator"></div>
@@ -1320,14 +1897,15 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/storage.js?v=8"></script>
-  <script src="js/mta-client.js?v=8"></script>
-  <script src="js/amtraker.js?v=8"></script>
-  <script src="js/location.js?v=8"></script>
-  <script src="js/tracker.js?v=8"></script>
-  <script src="js/map.js?v=8"></script>
-  <script src="js/ui.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
-  <script src="js/feature-request.js?v=8"></script>
+  <script src="js/storage.js?v=9"></script>
+  <script src="js/mta-client.js?v=9"></script>
+  <script src="js/amtraker.js?v=9"></script>
+  <script src="js/location.js?v=9"></script>
+  <script src="js/tracker.js?v=9"></script>
+  <script src="js/map.js?v=9"></script>
+  <script src="js/ui.js?v=9"></script>
+  <script src="js/effects.js?v=9"></script>
+  <script src="js/app.js?v=9"></script>
+  <script src="js/feature-request.js?v=9"></script>
 </body>
 </html>
