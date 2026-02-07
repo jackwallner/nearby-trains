@@ -58,6 +58,9 @@ const App = {
     UI.updateLocationName(location.name);
     UI.setStatus('loading', 'Initializing...');
 
+    // Render location tabs
+    this.renderTabs();
+
     // Initialize map
     MapManager.init(location.lat, location.lon);
 
@@ -206,6 +209,117 @@ const App = {
       clearInterval(this.countdownTimer);
       this.countdownTimer = null;
     }
+  },
+
+  /**
+   * Render location tabs bar
+   */
+  renderTabs() {
+    const locations = Storage.getLocations();
+    const active = Storage.getActiveLocation();
+    const activeName = active ? active.name : '';
+
+    UI.renderLocationTabs(
+      locations,
+      activeName,
+      // onSwitch
+      (name, loc) => {
+        Location.setActive(name);
+        UI.hideQuickAdd();
+        this.stationsCache = null;
+        this.start({ name, lat: loc.lat, lon: loc.lon, radius: loc.radius });
+      },
+      // onAdd — show the quick-add bar
+      () => {
+        UI.showQuickAdd();
+        this.bindQuickAdd();
+      },
+      // onDelete
+      (name) => {
+        if (!confirm(`Remove "${name}" from saved locations?`)) return;
+        Storage.deleteLocation(name);
+        // If we deleted the active one, switch to the first remaining
+        const remaining = Storage.getLocations();
+        if (remaining.length > 0) {
+          const next = remaining[0];
+          Location.setActive(next.name);
+          this.stationsCache = null;
+          this.start({ name: next.name, lat: next.lat, lon: next.lon, radius: next.radius });
+        } else {
+          UI.showSetup();
+        }
+      }
+    );
+  },
+
+  /**
+   * Bind quick-add bar events (called each time bar is shown)
+   */
+  bindQuickAdd() {
+    const searchBtn = document.getElementById('quick-add-search');
+    const gpsBtn = document.getElementById('quick-add-gps');
+    const cancelBtn = document.getElementById('quick-add-cancel');
+    const input = document.getElementById('quick-add-input');
+    const resultsContainer = document.getElementById('quick-add-results');
+
+    const doSearch = async () => {
+      const query = input?.value.trim();
+      if (!query) return;
+
+      // Try parsing as coordinates first
+      const coords = Location.parseCoordinates(query);
+      if (coords) {
+        const name = await Location.reverseGeocode(coords.lat, coords.lon);
+        const settings = Storage.getSettings();
+        Location.save(name, coords.lat, coords.lon, settings.radius);
+        Location.setActive(name);
+        UI.hideQuickAdd();
+        this.stationsCache = null;
+        this.start({ name, lat: coords.lat, lon: coords.lon, radius: settings.radius });
+        return;
+      }
+
+      // Search by name
+      searchBtn.textContent = '...';
+      const results = await Location.searchLocation(query);
+      searchBtn.textContent = 'Add';
+
+      if (resultsContainer) {
+        UI.showSearchResults(results, resultsContainer, async (result) => {
+          const settings = Storage.getSettings();
+          Location.save(result.name, result.lat, result.lon, settings.radius);
+          Location.setActive(result.name);
+          UI.hideQuickAdd();
+          this.stationsCache = null;
+          this.start({ name: result.name, lat: result.lat, lon: result.lon, radius: settings.radius });
+        });
+      }
+    };
+
+    searchBtn?.addEventListener('click', doSearch);
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doSearch();
+      if (e.key === 'Escape') UI.hideQuickAdd();
+    });
+
+    cancelBtn?.addEventListener('click', () => UI.hideQuickAdd());
+
+    gpsBtn?.addEventListener('click', async () => {
+      gpsBtn.textContent = '⏳';
+      try {
+        const pos = await Location.getCurrentPosition();
+        const name = await Location.reverseGeocode(pos.lat, pos.lon);
+        const settings = Storage.getSettings();
+        Location.save(name, pos.lat, pos.lon, settings.radius);
+        Location.setActive(name);
+        UI.hideQuickAdd();
+        this.stationsCache = null;
+        this.start({ name, lat: pos.lat, lon: pos.lon, radius: settings.radius });
+      } catch (err) {
+        gpsBtn.textContent = '📍';
+        UI.showToast(err.message, 'error');
+      }
+    });
   },
 
   /**

@@ -102,14 +102,13 @@ const MapManager = {
       maxZoom: 19
     });
 
-    // Use dark by default, switch based on theme
-    const isDark = document.body.getAttribute('data-theme') !== 'light';
-    (isDark ? darkTiles : lightTiles).addTo(this.map);
+    // Always use light tiles
+    lightTiles.addTo(this.map);
 
     // Store tile layers for theme switching
     this._darkTiles = darkTiles;
     this._lightTiles = lightTiles;
-    this._currentTiles = isDark ? darkTiles : lightTiles;
+    this._currentTiles = lightTiles;
 
     // Add user location marker
     this.userMarker = L.marker([lat, lon], {

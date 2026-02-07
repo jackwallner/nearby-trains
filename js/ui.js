@@ -132,6 +132,92 @@ const UI = {
   },
 
   /**
+   * Render the location tabs bar with saved locations + "+" button
+   * @param {Array} locations - Array of {name, lat, lon, radius}
+   * @param {string} activeName - Name of the currently active location
+   * @param {Function} onSwitch - Called with (name, loc) when a tab is clicked
+   * @param {Function} onAdd - Called when the "+" button is clicked
+   * @param {Function} onDelete - Called with (name) when a delete "×" is clicked
+   */
+  renderLocationTabs(locations, activeName, onSwitch, onAdd, onDelete) {
+    const container = this.elements.locationTabs;
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    locations.forEach(loc => {
+      const tab = document.createElement('div');
+      tab.className = `location-tab ${loc.name === activeName ? 'active' : ''}`;
+      tab.innerHTML = `${loc.name}${locations.length > 1 ? '<span class="delete-loc" title="Remove">×</span>' : ''}`;
+
+      // Click the tab text to switch
+      tab.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-loc')) return;
+        if (loc.name !== activeName) {
+          onSwitch(loc.name, loc);
+        }
+      });
+
+      // Click × to delete
+      const deleteBtn = tab.querySelector('.delete-loc');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          onDelete(loc.name);
+        });
+      }
+
+      container.appendChild(tab);
+    });
+
+    // "+" add button
+    const addTab = document.createElement('div');
+    addTab.className = 'location-tab add-tab';
+    addTab.textContent = '+';
+    addTab.title = 'Add location';
+    addTab.addEventListener('click', onAdd);
+    container.appendChild(addTab);
+  },
+
+  /**
+   * Show/hide the quick-add location bar
+   */
+  showQuickAdd() {
+    const bar = document.getElementById('quick-add-bar');
+    const results = document.getElementById('quick-add-results');
+    if (!bar) return;
+
+    if (!bar.classList.contains('hidden')) {
+      // Toggle off
+      bar.classList.add('hidden');
+      bar.innerHTML = '';
+      if (results) results.innerHTML = '';
+      return;
+    }
+
+    bar.classList.remove('hidden');
+    bar.innerHTML = `
+      <input type="text" id="quick-add-input" placeholder="Search city or enter coordinates..." autofocus>
+      <button class="btn btn-primary btn-small" id="quick-add-search">Add</button>
+      <button class="btn btn-small" id="quick-add-gps" title="Use GPS">📍</button>
+      <button class="btn btn-small" id="quick-add-cancel">✕</button>
+    `;
+
+    // Focus the input
+    setTimeout(() => document.getElementById('quick-add-input')?.focus(), 50);
+  },
+
+  /**
+   * Hide the quick-add bar
+   */
+  hideQuickAdd() {
+    const bar = document.getElementById('quick-add-bar');
+    const results = document.getElementById('quick-add-results');
+    if (bar) { bar.classList.add('hidden'); bar.innerHTML = ''; }
+    if (results) results.innerHTML = '';
+  },
+
+  /**
    * Update the stats grid
    */
   updateStats(stats) {
