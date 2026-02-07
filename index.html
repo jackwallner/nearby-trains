@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Trains - Track Trains Near You</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚂</text></svg>">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-hover: #f1f5f9;
+      --bg-input: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #dbeafe;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+
+      /* Train-specific colors */
+      --train-green: #16a34a;
+      --train-yellow: #ca8a04;
+      --train-red: #dc2626;
+      --train-blue: #2563eb;
+      --train-purple: #7c3aed;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-page: #0f172a;
+        --bg-card: #1e293b;
+        --bg-hover: #334155;
+        --bg-input: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --border: #334155;
+        --accent: #3b82f6;
+        --accent-hover: #2563eb;
+        --accent-light: #1e3a5f;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3);
+        --shadow-lg: 0 10px 25px rgba(0,0,0,0.3);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .header-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .btn:hover { background: var(--bg-hover); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-small {
+      padding: 4px 12px;
+      font-size: 13px;
+    }
+
+    .btn-block { width: 100%; }
+
+    /* Location */
+    .location-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .location-bar .location-name {
+      font-weight: 600;
+    }
+
+    .location-bar .location-detail {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    #location-tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .location-tab {
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+
+    .location-tab.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    /* Current Train Hero */
+    .current-train {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .waiting-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    .radar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin: 0 auto 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .radar-sweep {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 0;
+      left: 50%;
+      transform-origin: bottom left;
+      background: linear-gradient(45deg, transparent, rgba(37, 99, 235, 0.3));
+      animation: sweep 2s infinite linear;
+    }
+
+    @keyframes sweep {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .train-hero {
+      display: none;
+    }
+
+    .train-hero.active {
+      display: block;
+    }
+
+    .train-hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .train-hero-name {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .train-hero-number {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .train-status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .train-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+    }
+
+    .train-hero-stat {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+    }
+
+    .train-hero-stat-value {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .train-hero-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .train-route-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .train-route-arrow {
+      color: var(--accent);
+    }
+
+    /* Map */
+    .map-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .map-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    #train-map {
+      height: 400px;
+      width: 100%;
+    }
+
+    /* Train History / Spotted List */
+    .history-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .train-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .train-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .train-item:last-child { border-bottom: none; }
+    .train-item:hover { background: var(--bg-hover); }
+
+    .train-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .train-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .train-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .train-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .train-route {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .train-item-right {
+      text-align: right;
+    }
+
+    .train-distance {
+      font-family: monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .train-speed {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Station List */
+    .station-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .station-item:last-child { border-bottom: none; }
+    .station-item:hover { background: var(--bg-hover); }
+
+    .station-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .station-detail {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .station-distance {
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      z-index: 100;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .status-indicator.success { background: var(--success); }
+    .status-indicator.error { background: var(--danger); }
+    .status-indicator.loading { background: var(--warning); animation: pulse 1s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .status-bar .spacer { flex: 1; }
+
+    /* Setup Wizard */
+    .setup-container {
+      max-width: 480px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+
+    .setup-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .setup-header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .setup-header p {
+      color: var(--text-secondary);
+    }
+
+    .setup-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .setup-section h3 {
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .setup-divider {
+      text-align: center;
+      color: var(--text-muted);
+      margin: 16px 0;
+      font-size: 13px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .hidden { display: none !important; }
+    .animate-in { animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Settings Location Items */
+    .settings-location-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+
+    .saved-location-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .saved-location-card:hover { background: var(--bg-hover); }
+
+    .location-name { font-weight: 600; font-size: 14px; }
+    .location-coords { font-size: 12px; color: var(--text-muted); }
+
+    /* Provider filter chips */
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .filter-chip {
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .filter-chip.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Dropdown */
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      min-width: 200px;
+      z-index: 200;
+    }
+
+    .dropdown-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.1s;
+    }
+
+    .dropdown-item:hover { background: var(--bg-hover); }
+    .dropdown-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+    .dropdown-item:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+
+    .settings-tab { }
+
+    /* Train next station info */
+    .next-station {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { padding: 16px; }
+      .header { gap: 12px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      #train-map { height: 300px; }
+      .train-hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* Padding for status bar */
+    body { padding-bottom: 60px; }
+  </style>
+</head>
+<body>
+  <!-- Setup Wizard -->
+  <div id="setup-wizard" class="hidden">
+    <div class="setup-container animate-in">
+      <div class="setup-header">
+        <div class="logo" style="margin: 0 auto 16px;">🚂</div>
+        <h1>Nearby Trains</h1>
+        <p>Track Amtrak, VIA Rail &amp; Brightline trains near your location in real-time</p>
+      </div>
+
+      <!-- Quick Start -->
+      <div class="setup-section">
+        <h3>📍 Quick Start</h3>
+        <button id="btn-use-location" class="btn btn-primary btn-block">
+          Use My Current Location
+        </button>
+      </div>
+
+      <div class="setup-divider">or</div>
+
+      <!-- Manual Entry -->
+      <div class="setup-section">
+        <h3>🗺️ Enter Location</h3>
+        <div class="form-group">
+          <label>Search by City or Address</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="location-search" placeholder="e.g. Portland, OR" style="flex:1;">
+            <button id="btn-search-location" class="btn btn-primary btn-small">Search</button>
+          </div>
+          <div id="setup-search-results" style="margin-top:8px;"></div>
+        </div>
+
+        <button id="btn-manual-coords" class="btn btn-small" style="margin-bottom: 12px;">Enter coordinates manually</button>
+
+        <div id="manual-coords-form" class="hidden">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Latitude</label>
+              <input type="number" id="manual-lat" step="0.0001" placeholder="45.6252">
+            </div>
+            <div class="form-group">
+              <label>Longitude</label>
+              <input type="number" id="manual-lon" step="0.0001" placeholder="-122.5281">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Detection Radius (miles)</label>
+            <input type="number" id="manual-radius" min="1" max="100" value="10">
+          </div>
+          <div class="form-group">
+            <label>Location Name</label>
+            <input type="text" id="manual-name" placeholder="Home">
+          </div>
+          <button id="btn-save-manual" class="btn btn-primary btn-block">Start Tracking</button>
+        </div>
+      </div>
+
+      <!-- Saved Locations -->
+      <div id="setup-saved-section" class="setup-section hidden">
+        <h3>📌 Saved Locations</h3>
+        <div id="setup-saved-locations"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="main-app" class="hidden">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <div class="logo">🚂</div>
+          <div>
+            <div class="header-title">Nearby Trains</div>
+            <div class="header-subtitle">
+              <span id="location-name">--</span> • <span id="detection-radius">10</span> mile radius
+            </div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="btn-refresh" class="btn btn-small">🔄 Refresh</button>
+          <button id="btn-settings" class="btn btn-small">⚙️</button>
+          <div id="settings-dropdown" class="dropdown hidden">
+            <div class="dropdown-item" id="menu-change-location">📍 Change Location</div>
+            <div class="dropdown-item" id="menu-settings">⚙️ Settings</div>
+            <div class="dropdown-item" id="menu-export">📤 Export Data</div>
+            <div class="dropdown-item" id="menu-import">📥 Import Data</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Tabs -->
+      <div id="location-tabs"></div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div id="active-count" class="stat-value">-</div>
+          <div class="stat-label">Nearby</div>
+        </div>
+        <div class="stat-card">
+          <div id="today-count" class="stat-value">-</div>
+          <div class="stat-label">Spotted Today</div>
+        </div>
+        <div class="stat-card">
+          <div id="closest-today" class="stat-value">-</div>
+          <div class="stat-label">Closest (mi)</div>
+        </div>
+        <div class="stat-card">
+          <div id="avg-speed" class="stat-value">-</div>
+          <div class="stat-label">Avg Speed</div>
+        </div>
+      </div>
+
+      <!-- Current Closest Train -->
+      <div id="current-train-card" class="current-train">
+        <div class="waiting-state" id="waiting-state">
+          <div class="radar">
+            <div class="radar-sweep"></div>
+          </div>
+          <p>Scanning for trains...</p>
+          <p style="font-size: 13px; margin-top: 8px;">Updates every <span id="refresh-interval-display">60</span> seconds</p>
+        </div>
+        <div class="train-hero" id="train-hero">
+          <div class="train-hero-header">
+            <div>
+              <div class="train-hero-name" id="hero-route-name">--</div>
+              <div class="train-hero-number">Train #<span id="hero-train-num">--</span> • <span id="hero-provider">Amtrak</span></div>
+            </div>
+            <div class="train-status-badge" id="hero-status-badge">On Time</div>
+          </div>
+          <div class="train-route-info">
+            <span id="hero-origin">--</span>
+            <span class="train-route-arrow">→</span>
+            <span id="hero-destination">--</span>
+          </div>
+          <div class="train-hero-stats">
+            <div class="train-hero-stat">
+              <div class="train-hero-stat-value" id="hero-distance">--</div>
+              <div class="train-hero-stat-label">Miles Away</div>
+            </div>
+            <div class="train-hero-stat">
+              <div class="train-hero-stat-value" id="hero-speed">--</div>
+              <div class="train-hero-stat-label">MPH</div>
+            </div>
+            <div class="train-hero-stat">
+              <div class="train-hero-stat-value" id="hero-heading">--</div>
+              <div class="train-hero-stat-label">Heading</div>
+            </div>
+            <div class="train-hero-stat">
+              <div class="train-hero-stat-value" id="hero-next-station">--</div>
+              <div class="train-hero-stat-label">Next Stop</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-section">
+        <div class="map-header">
+          <h3>🗺️ Train Map</h3>
+          <div>
+            <button id="btn-toggle-stations" class="btn btn-small">📍 Stations</button>
+          </div>
+        </div>
+        <div id="train-map"></div>
+      </div>
+
+      <!-- Nearby Stations -->
+      <div id="stations-section" class="history-section hidden">
+        <div class="history-header">
+          <h3>🏛️ Nearby Stations</h3>
+          <span class="header-subtitle" id="stations-count">0 stations</span>
+        </div>
+        <div class="train-list" id="station-list"></div>
+      </div>
+
+      <!-- Spotted Trains Today -->
+      <div class="history-section">
+        <div class="history-header">
+          <h3>🔭 Trains Spotted Today <span id="history-location-name" style="color: var(--text-muted); font-weight: 400;"></span></h3>
+          <span class="header-subtitle" id="spotted-count">0 trains</span>
+        </div>
+        <div class="train-list" id="train-history"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>⚙️ Settings</h2>
+        <button id="btn-close-settings-x" class="btn" style="padding: 4px 8px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="settings-tab" value="general">
+
+        <div id="tab-general" class="settings-tab">
+          <div class="form-group">
+            <label>Refresh Interval (seconds)</label>
+            <input type="number" id="setting-refresh" min="30" max="300" value="60">
+            <small>Minimum 30s. The Amtraker API updates every ~1-2 min.</small>
+          </div>
+
+          <div class="form-group">
+            <label>Detection Radius (miles)</label>
+            <input type="number" id="setting-radius" min="1" max="100" value="10">
+            <small>How far from your location to search for trains</small>
+          </div>
+
+          <div class="form-group">
+            <label>Providers</label>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                <input type="checkbox" id="setting-amtrak" checked> Amtrak
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                <input type="checkbox" id="setting-via" checked> VIA Rail (Canada)
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                <input type="checkbox" id="setting-brightline" checked> Brightline (Florida)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="setting-night-pause"> Pause overnight
+            </label>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Night Start</label>
+              <input type="time" id="setting-night-start" value="23:00">
+            </div>
+            <div class="form-group">
+              <label>Night End</label>
+              <input type="time" id="setting-night-end" value="06:00">
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-locations" class="settings-tab hidden">
+          <div id="settings-locations-list"></div>
+        </div>
+
+        <div id="tab-data" class="settings-tab hidden">
+          <div class="form-group">
+            <button id="btn-export" class="btn btn-block">📤 Export All Data</button>
+          </div>
+          <div class="form-group">
+            <button id="btn-import" class="btn btn-block">📥 Import Data</button>
+            <input type="file" id="import-file" accept=".json" class="hidden">
+          </div>
+          <div class="form-group">
+            <button id="btn-clear-history" class="btn btn-block" style="color: var(--danger);">🗑️ Clear Spotting History</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-settings" class="btn">Cancel</button>
+        <button id="btn-save-settings" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Location Modal -->
+  <div id="change-location-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📍 Change Location</h2>
+        <button id="btn-close-change-loc-x" class="btn" style="padding: 4px 8px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <button id="btn-use-location-modal" class="btn btn-primary btn-block">📍 Use Current Location</button>
+        </div>
+        <div class="form-group">
+          <label>Search by City</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="modal-location-search" placeholder="e.g. Chicago, IL" style="flex:1;">
+            <button id="btn-modal-search" class="btn btn-primary btn-small">Search</button>
+          </div>
+          <div id="modal-search-results" style="margin-top:8px;"></div>
+        </div>
+        <div id="modal-saved-locations"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-change-loc" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div id="status-indicator" class="status-indicator"></div>
+    <span id="status-text">Ready</span>
+    <span class="spacer"></span>
+    <span id="next-update-countdown" style="font-size: 13px; color: var(--text-muted);">--</span>
+    <span class="last-update" style="font-size: 13px; color: var(--text-muted);">Updated: <span id="last-update">--</span></span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/amtraker.js"></script>
+  <script src="js/location.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
