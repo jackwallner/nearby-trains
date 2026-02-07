@@ -35,6 +35,20 @@ const Effects = {
     // Add floating particles background
     this.initBackgroundParticles();
 
+    // Occasional shooting stars (Talon Gold / Star Wars / aerospace)
+    this.initShootingStars();
+
+    // Rotating scanning messages
+    this.startScanningMessages();
+
+    // Logo easter egg (tap 5 times)
+    this.initLogoEasterEgg();
+
+    // Console tribute
+    console.log('%c🚂 In memory of Richard A. Wallner (1933–2025)', 'font-size:14px;font-weight:bold;color:#3b82f6;');
+    console.log('%c"Always happiest near a track, a timetable, and a camera."', 'font-style:italic;color:#94a3b8;');
+    console.log('%cQueens → Columbia → Lockheed → SAIC → Half Moon Bay → ∞', 'color:#94a3b8;');
+
     console.log('✨ Effects engine initialized');
   },
 
@@ -363,6 +377,152 @@ const Effects = {
       btn.classList.add('btn-refresh-spinning');
       setTimeout(() => btn.classList.remove('btn-refresh-spinning'), 800);
     }
+  },
+
+  // =============================================
+  // SHOOTING STARS (aerospace / Star Wars nod)
+  // =============================================
+
+  _shootingStarTimer: null,
+
+  initShootingStars() {
+    // Occasional shooting star — a nod to Talon Gold & Star Wars
+    const fire = () => {
+      const startX = Math.random() * window.innerWidth * 0.6;
+      const startY = Math.random() * window.innerHeight * 0.3;
+      const angle = Math.PI / 6 + Math.random() * 0.3;
+      const speed = 4 + Math.random() * 4;
+      const length = 30 + Math.random() * 40;
+
+      this.sparkles.push({
+        x: startX, y: startY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.015 + Math.random() * 0.01,
+        size: 2,
+        color: '#ffffff',
+        rotation: angle,
+        rotSpeed: 0,
+        _isShootingStar: true
+      });
+
+      // Trail particles
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          this.sparkles.push({
+            x: startX + Math.cos(angle) * speed * i * 2,
+            y: startY + Math.sin(angle) * speed * i * 2,
+            vx: Math.cos(angle) * speed * 0.3,
+            vy: Math.sin(angle) * speed * 0.3,
+            life: 0.6,
+            decay: 0.03,
+            size: 1.5 - i * 0.2,
+            color: i < 2 ? '#93c5fd' : '#c4b5fd',
+            rotation: 0,
+            rotSpeed: 0
+          });
+        }, i * 30);
+      }
+
+      // Schedule next one — random 15-45 seconds
+      this._shootingStarTimer = setTimeout(fire, 15000 + Math.random() * 30000);
+    };
+
+    // First one after 8-20 seconds
+    this._shootingStarTimer = setTimeout(fire, 8000 + Math.random() * 12000);
+  },
+
+  // =============================================
+  // ROTATING SCANNING MESSAGES
+  // =============================================
+
+  _scanMsgIndex: 0,
+  _scanMsgTimer: null,
+
+  scanningMessages: [
+    'Scanning for trains...',
+    'Checking the timetable...',
+    'Anything can be improved...',
+    'Listening for a whistle...',
+    'Camera ready...',
+    'Watching the tracks...',
+    'Happiest near a track...',
+    'Herding cats is easier...',
+    'Calling out the elephants...',
+    'Holding firm when it counts...',
+  ],
+
+  startScanningMessages() {
+    const el = document.getElementById('scanning-message');
+    if (!el) return;
+
+    this._scanMsgTimer = setInterval(() => {
+      this._scanMsgIndex = (this._scanMsgIndex + 1) % this.scanningMessages.length;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(4px)';
+      setTimeout(() => {
+        el.textContent = this.scanningMessages[this._scanMsgIndex];
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 200);
+    }, 4000);
+  },
+
+  stopScanningMessages() {
+    if (this._scanMsgTimer) {
+      clearInterval(this._scanMsgTimer);
+      this._scanMsgTimer = null;
+    }
+  },
+
+  // =============================================
+  // LOGO EASTER EGG
+  // =============================================
+
+  _logoClicks: 0,
+  _logoTimeout: null,
+
+  initLogoEasterEgg() {
+    const logo = document.getElementById('header-logo');
+    if (!logo) return;
+
+    logo.addEventListener('click', () => {
+      this._logoClicks++;
+      clearTimeout(this._logoTimeout);
+
+      if (this._logoClicks >= 5) {
+        this._logoClicks = 0;
+        // Show a brief tribute
+        if (typeof UI !== 'undefined') {
+          UI.showToast('For Dick — who believed anything could be improved ❤️🚂', 'info', 5000);
+        }
+        // Confetti rain
+        this.confettiRain(3000);
+      } else {
+        this._logoTimeout = setTimeout(() => { this._logoClicks = 0; }, 2000);
+      }
+    });
+  },
+
+  // =============================================
+  // STATUS BAR IDLE PHRASES
+  // =============================================
+
+  idlePhrases: [
+    'Always happiest near a track',
+    'Watching for the next one',
+    'Camera ready, timetable in hand',
+    'The tough guy in the room',
+    'Never stopped learning',
+    'Queens to California — and never went back',
+    'Sharp mind, unwavering standards',
+    'Anything can be improved',
+    'Leaving every place better than he found it',
+  ],
+
+  getIdlePhrase() {
+    return this.idlePhrases[Math.floor(Math.random() * this.idlePhrases.length)];
   }
 };
 
