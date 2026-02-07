@@ -284,10 +284,8 @@ const UI = {
     const heroLinks = document.getElementById('hero-links');
     if (heroLinks) {
       const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
-      const transitDocsURL = AmtrakerClient.getTransitDocsURL(train);
       heroLinks.innerHTML = `
         <a href="${amtrakerURL}" target="_blank" rel="noopener" class="btn btn-primary btn-small" style="text-decoration:none;font-size:13px;">🔗 View on Amtraker ↗</a>
-        <a href="${transitDocsURL}" target="_blank" rel="noopener" class="btn btn-small" style="text-decoration:none;font-size:13px;">🗺️ TransitDocs ↗</a>
       `;
     }
   },

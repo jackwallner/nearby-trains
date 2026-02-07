@@ -61,6 +61,9 @@ const App = {
     // Render location tabs
     this.renderTabs();
 
+    // Highlight active hub chip
+    this.updateHubBar(location.name);
+
     // Initialize map
     MapManager.init(location.lat, location.lon);
 
@@ -195,6 +198,19 @@ const App = {
         this.refresh();
       }
     }, 1000);
+  },
+
+  /**
+   * Highlight the active hub chip (if the current location matches a hub)
+   */
+  updateHubBar(locationName) {
+    document.querySelectorAll('#hub-bar .hub-chip').forEach(chip => {
+      if (chip.dataset.name === locationName) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
   },
 
   /**
@@ -445,6 +461,20 @@ const App = {
         Location.save(name, lat, lon, settings.radius);
         Location.setActive(name);
         UI.closeChangeLocation();
+        this.stationsCache = null;
+        this.start({ name, lat, lon, radius: settings.radius });
+      });
+    });
+
+    // Hub bar quick-switch chips
+    document.querySelectorAll('#hub-bar .hub-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const lat = parseFloat(chip.dataset.lat);
+        const lon = parseFloat(chip.dataset.lon);
+        const name = chip.dataset.name;
+        const settings = Storage.getSettings();
+        Location.save(name, lat, lon, settings.radius);
+        Location.setActive(name);
         this.stationsCache = null;
         this.start({ name, lat, lon, radius: settings.radius });
       });
