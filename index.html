@@ -847,46 +847,6 @@
       font-size: 22px;
     }
 
-    /* Hubs dropdown */
-    .hubs-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 8px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      min-width: 260px;
-      z-index: 9999;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .hubs-dropdown-header {
-      padding: 10px 16px 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-    }
-    .hub-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.1s;
-    }
-    .hub-item:hover { background: var(--bg-hover); }
-    .hub-item:last-child { border-radius: 0 0 var(--radius) var(--radius); }
-    .hub-item .hub-emoji { font-size: 18px; width: 24px; text-align: center; }
-    .hub-item .hub-label { font-weight: 500; }
-    .hub-item .hub-detail { font-size: 11px; color: var(--text-muted); }
-    .hub-item.active { background: var(--accent-light); }
-    .hub-item.active .hub-label { color: var(--accent); font-weight: 600; }
-
     /* Feature request modal */
     .feature-request-modal {
       position: fixed;
@@ -1057,46 +1017,6 @@
           </div>
         </div>
         <div class="header-actions">
-          <button id="btn-hubs" class="btn btn-primary" title="Popular Train Hubs" style="padding:8px 16px;font-size:15px;font-weight:600;">🚉 Hubs</button>
-          <div id="hubs-dropdown" class="hubs-dropdown hidden">
-            <div class="hubs-dropdown-header">Popular Amtrak Hubs</div>
-            <div class="hub-item" data-lat="41.8786" data-lon="-87.6398" data-name="Chicago Union Station">
-              <span class="hub-emoji">🏙️</span>
-              <div><div class="hub-label">Chicago</div><div class="hub-detail">Union Station · Major hub</div></div>
-            </div>
-            <div class="hub-item" data-lat="40.7506" data-lon="-73.9935" data-name="NYC Penn Station">
-              <span class="hub-emoji">🗽</span>
-              <div><div class="hub-label">New York City</div><div class="hub-detail">Penn Station · NEC hub</div></div>
-            </div>
-            <div class="hub-item" data-lat="38.8977" data-lon="-77.0365" data-name="Washington DC">
-              <span class="hub-emoji">🏛️</span>
-              <div><div class="hub-label">Washington DC</div><div class="hub-detail">Union Station · NEC hub</div></div>
-            </div>
-            <div class="hub-item" data-lat="34.0565" data-lon="-118.2340" data-name="LA Union Station">
-              <span class="hub-emoji">🌴</span>
-              <div><div class="hub-label">Los Angeles</div><div class="hub-detail">Union Station · West Coast</div></div>
-            </div>
-            <div class="hub-item" data-lat="39.9566" data-lon="-75.1819" data-name="Philadelphia 30th St">
-              <span class="hub-emoji">🔔</span>
-              <div><div class="hub-label">Philadelphia</div><div class="hub-detail">30th St Station · NEC</div></div>
-            </div>
-            <div class="hub-item" data-lat="45.5289" data-lon="-122.6765" data-name="Portland OR">
-              <span class="hub-emoji">🌲</span>
-              <div><div class="hub-label">Portland</div><div class="hub-detail">Union Station · Cascades</div></div>
-            </div>
-            <div class="hub-item" data-lat="26.1197" data-lon="-80.1448" data-name="Fort Lauderdale">
-              <span class="hub-emoji">☀️</span>
-              <div><div class="hub-label">Fort Lauderdale</div><div class="hub-detail">Brightline · FL hub</div></div>
-            </div>
-            <div class="hub-item" data-lat="38.5845" data-lon="-121.4949" data-name="Sacramento">
-              <span class="hub-emoji">🏔️</span>
-              <div><div class="hub-label">Sacramento</div><div class="hub-detail">Capitol Corridor hub</div></div>
-            </div>
-            <div class="hub-item" data-lat="42.3662" data-lon="-71.0621" data-name="Boston South Station">
-              <span class="hub-emoji">🦞</span>
-              <div><div class="hub-label">Boston</div><div class="hub-detail">South Station · NEC</div></div>
-            </div>
-          </div>
           <button id="btn-feature-request" class="btn btn-small" title="Request a Feature">💡</button>
           <button id="btn-refresh" class="btn btn-small">🔄 Refresh</button>
           <button id="btn-settings" class="btn btn-small">⚙️</button>
@@ -1394,13 +1314,13 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/storage.js"></script>
-  <script src="js/amtraker.js"></script>
-  <script src="js/location.js"></script>
-  <script src="js/tracker.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/feature-request.js"></script>
+  <script src="js/storage.js?v=7"></script>
+  <script src="js/amtraker.js?v=7"></script>
+  <script src="js/location.js?v=7"></script>
+  <script src="js/tracker.js?v=7"></script>
+  <script src="js/map.js?v=7"></script>
+  <script src="js/ui.js?v=7"></script>
+  <script src="js/app.js?v=7"></script>
+  <script src="js/feature-request.js?v=7"></script>
 </body>
 </html>

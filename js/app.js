@@ -14,6 +14,28 @@ const App = {
   STATIONS_CACHE_DURATION: 300000, // 5 minutes
 
   /**
+   * Pre-save the top 3 busiest Amtrak hubs as default locations for new users
+   */
+  seedDefaultLocations() {
+    const existing = Storage.getLocations();
+    if (existing.length > 0) return; // user already has locations
+
+    const defaults = [
+      { name: 'Chicago Union Station', lat: 41.8786, lon: -87.6398, radius: 25 },
+      { name: 'NYC Penn Station', lat: 40.7506, lon: -73.9935, radius: 15 },
+      { name: 'Washington DC', lat: 38.8977, lon: -77.0365, radius: 15 },
+    ];
+
+    defaults.forEach(loc => {
+      Storage.saveLocation(loc.name, loc.lat, loc.lon, loc.radius);
+    });
+
+    // Set Chicago as default active (busiest hub)
+    Storage.setActiveLocation('Chicago Union Station');
+    console.log('🚉 Seeded default hub locations');
+  },
+
+  /**
    * Initialize the application
    */
   async init() {
@@ -21,6 +43,9 @@ const App = {
 
     // Cache DOM elements
     UI.cacheElements();
+
+    // Seed default locations for new users
+    this.seedDefaultLocations();
 
     // Check if we have a saved location
     const activeLocation = Storage.getActiveLocation();
@@ -72,9 +97,6 @@ const App = {
     // Render location tabs
     this.renderTabs();
 
-    // Highlight active hub in dropdown
-    this.updateHubHighlight(location.name);
-
     // Initialize map at new location
     MapManager.init(location.lat, location.lon);
 
@@ -86,8 +108,8 @@ const App = {
     // Reset tracker
     Tracker.resetSession();
 
-    // Do first refresh
-    await this.refresh();
+    // Do first refresh with the new location directly
+    await this.refresh(location);
 
     // Start auto-refresh
     this.startRefresh();
@@ -96,16 +118,22 @@ const App = {
   /**
    * Main refresh cycle — fetch trains and update everything
    */
-  async refresh() {
-    if (this.isRefreshing) return;
+  async refresh(forceLocation) {
+    if (this.isRefreshing) {
+      console.log('⚠️ Refresh already in progress, skipping');
+      return;
+    }
     this.isRefreshing = true;
     const myGeneration = this.refreshGeneration;
 
-    const activeLocation = Storage.getActiveLocation();
+    // Use provided location or read from storage
+    const activeLocation = forceLocation || Storage.getActiveLocation();
     if (!activeLocation) {
       this.isRefreshing = false;
       return;
     }
+
+    console.log(`📍 Refreshing for: ${activeLocation.name} (${activeLocation.lat}, ${activeLocation.lon})`);
 
     const settings = Storage.getSettings();
 
@@ -228,19 +256,6 @@ const App = {
         this.refresh();
       }
     }, 1000);
-  },
-
-  /**
-   * Highlight the active hub in the dropdown
-   */
-  updateHubHighlight(locationName) {
-    document.querySelectorAll('#hubs-dropdown .hub-item').forEach(item => {
-      if (item.dataset.name === locationName) {
-        item.classList.add('active');
-      } else {
-        item.classList.remove('active');
-      }
-    });
   },
 
   /**
@@ -459,14 +474,12 @@ const App = {
     // Settings gear — toggle dropdown
     UI.elements.btnSettings?.addEventListener('click', (e) => {
       e.stopPropagation();
-      hubsDropdown?.classList.add('hidden');
       UI.elements.settingsDropdown?.classList.toggle('hidden');
     });
 
-    // Close all dropdowns on outside click
+    // Close dropdown on outside click
     document.addEventListener('click', () => {
       UI.elements.settingsDropdown?.classList.add('hidden');
-      hubsDropdown?.classList.add('hidden');
     });
 
     // Dropdown menu items
@@ -493,32 +506,6 @@ const App = {
         Location.save(name, lat, lon, settings.radius);
         Location.setActive(name);
         UI.closeChangeLocation();
-        this.stationsCache = null;
-        this.start({ name, lat, lon, radius: settings.radius });
-      });
-    });
-
-    // Hubs dropdown toggle
-    const btnHubs = document.getElementById('btn-hubs');
-    const hubsDropdown = document.getElementById('hubs-dropdown');
-    btnHubs?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      UI.elements.settingsDropdown?.classList.add('hidden');
-      hubsDropdown?.classList.toggle('hidden');
-    });
-
-    // Hub item clicks — switch location
-    document.querySelectorAll('#hubs-dropdown .hub-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const lat = parseFloat(item.dataset.lat);
-        const lon = parseFloat(item.dataset.lon);
-        const name = item.dataset.name;
-        const settings = Storage.getSettings();
-        console.log(`🚉 Switching to hub: ${name} (${lat}, ${lon})`);
-        Location.save(name, lat, lon, settings.radius);
-        Location.setActive(name);
-        hubsDropdown?.classList.add('hidden');
         this.stationsCache = null;
         this.start({ name, lat, lon, radius: settings.radius });
       });
