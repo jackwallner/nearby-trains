@@ -1,5 +1,5 @@
 /**
- * Nearby Trains - Main Application Controller
+ * Dick Wallner Train Tracker - Main Application Controller
  * Ties together all modules: Amtraker API, Location, Tracker, Map, UI, Storage
  */
 
@@ -16,7 +16,7 @@ const App = {
    * Initialize the application
    */
   async init() {
-    console.log('🚂 Nearby Trains initializing...');
+    console.log('🚂 Dick Wallner Train Tracker initializing...');
 
     // Cache DOM elements
     UI.cacheElements();
@@ -44,7 +44,7 @@ const App = {
     // Mark as visited
     Storage.markVisited();
 
-    console.log('🚂 Nearby Trains ready!');
+    console.log('🚂 Dick Wallner Train Tracker ready!');
   },
 
   /**
