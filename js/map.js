@@ -12,15 +12,22 @@ const MapManager = {
   stationsVisible: true,
   trainPaths: new Map(),
 
-  // Custom train icon
+  // Heading cardinal to degrees lookup
+  HEADING_DEGREES: {
+    'N': 0, 'NNE': 22.5, 'NE': 45, 'ENE': 67.5,
+    'E': 90, 'ESE': 112.5, 'SE': 135, 'SSE': 157.5,
+    'S': 180, 'SSW': 202.5, 'SW': 225, 'WSW': 247.5,
+    'W': 270, 'WNW': 292.5, 'NW': 315, 'NNW': 337.5
+  },
+
+  // Custom train icon with directional arrow
   createTrainIcon(train, isClosest = false) {
     const provider = (train.provider || '').toLowerCase();
     let color = '#3b82f6'; // default blue
-    let emoji = '🚆';
 
-    if (provider === 'brightline') { color = '#eab308'; emoji = '🚄'; }
-    else if (provider === 'via') { color = '#dc2626'; emoji = '🚃'; }
-    else { color = '#2563eb'; emoji = '🚆'; }
+    if (provider === 'brightline') { color = '#eab308'; }
+    else if (provider === 'via') { color = '#dc2626'; }
+    else { color = '#2563eb'; }
 
     // Use iconColor for on-time status
     if (train.iconColor) color = train.iconColor;
@@ -28,6 +35,20 @@ const MapManager = {
     const size = isClosest ? 36 : 28;
     const borderWidth = isClosest ? 3 : 2;
     const shadow = isClosest ? '0 0 12px rgba(59,130,246,0.6)' : '0 2px 4px rgba(0,0,0,0.3)';
+
+    // Determine rotation from heading
+    const heading = (train.heading || '').toUpperCase().trim();
+    const degrees = this.HEADING_DEGREES[heading];
+    const isStopped = !train.velocity || train.velocity === 0;
+    const hasDirection = degrees !== undefined && !isStopped;
+
+    // Arrow SVG (chevron pointing up, rotated by heading)
+    const arrowSVG = `<svg viewBox="0 0 24 24" width="${isClosest ? 20 : 14}" height="${isClosest ? 20 : 14}" style="fill:white;transform:rotate(${degrees || 0}deg);">
+      <path d="M12 2 L22 18 L12 13 L2 18 Z"/>
+    </svg>`;
+
+    // Dot for stopped trains
+    const dotHTML = `<div style="width:${isClosest ? 10 : 7}px;height:${isClosest ? 10 : 7}px;background:white;border-radius:50%;"></div>`;
 
     return L.divIcon({
       className: 'train-map-marker',
@@ -37,14 +58,13 @@ const MapManager = {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: ${isClosest ? 20 : 16}px;
         background: ${color};
         border: ${borderWidth}px solid white;
         border-radius: 50%;
         box-shadow: ${shadow};
         cursor: pointer;
         transition: transform 0.3s;
-      ">${emoji}</div>`,
+      ">${hasDirection ? arrowSVG : dotHTML}</div>`,
       iconSize: [size, size],
       iconAnchor: [size / 2, size / 2],
       popupAnchor: [0, -size / 2]

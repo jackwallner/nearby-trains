@@ -177,21 +177,22 @@ const Storage = {
 
   // Export/Import
   exportData() {
-    return {
+    return JSON.stringify({
       settings: this.getSettings(),
       locations: this.getLocations(),
       activeLocation: localStorage.getItem(this.KEYS.ACTIVE_LOCATION),
       history: this.getHistory(),
       exportedAt: new Date().toISOString(),
       version: '1.0.0'
-    };
+    }, null, 2);
   },
 
   importData(data) {
-    if (data.settings) this.saveSettings(data.settings);
-    if (data.locations) localStorage.setItem(this.KEYS.LOCATIONS, JSON.stringify(data.locations));
-    if (data.activeLocation) localStorage.setItem(this.KEYS.ACTIVE_LOCATION, data.activeLocation);
-    if (data.history) localStorage.setItem(this.KEYS.HISTORY, JSON.stringify(data.history));
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+    if (parsed.settings) this.saveSettings(parsed.settings);
+    if (parsed.locations) localStorage.setItem(this.KEYS.LOCATIONS, JSON.stringify(parsed.locations));
+    if (parsed.activeLocation) localStorage.setItem(this.KEYS.ACTIVE_LOCATION, parsed.activeLocation);
+    if (parsed.history) localStorage.setItem(this.KEYS.HISTORY, JSON.stringify(parsed.history));
   },
 
   clearAll() {

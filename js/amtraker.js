@@ -225,9 +225,13 @@ const AmtrakerClient = {
   },
 
   /**
-   * Get Amtraker.com URL for a train
+   * Get Amtraker.com URL for a specific train instance
    */
   getAmtrakerURL(train) {
+    if (train.trainID && train.trainID.includes('-')) {
+      const parts = train.trainID.split('-');
+      return `https://amtraker.com/trains/${parts[0]}/${parts[1]}`;
+    }
     return `https://amtraker.com/trains/${train.trainNum}`;
   },
 
