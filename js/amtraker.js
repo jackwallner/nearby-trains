@@ -236,13 +236,6 @@ const AmtrakerClient = {
   },
 
   /**
-   * Get Transitdocs URL for a train
-   */
-  getTransitDocsURL(train) {
-    return `https://asm.transitdocs.com/train/${train.trainNum}`;
-  },
-
-  /**
    * Get provider emoji
    */
   getProviderEmoji(train) {

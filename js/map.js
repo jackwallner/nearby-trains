@@ -241,7 +241,6 @@ const MapManager = {
     const distance = train.distance !== undefined ? Tracker.formatDistance(train.distance) : '';
 
     const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
-    const transitDocsURL = AmtrakerClient.getTransitDocsURL(train);
 
     return `
       <div style="min-width: 220px; font-family: system-ui, sans-serif;">
@@ -260,7 +259,6 @@ const MapManager = {
         </div>
         <div style="display:flex;gap:6px;margin-top:8px;">
           <a href="${amtrakerURL}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 10px;background:#2563eb;color:white;border-radius:12px;text-decoration:none;font-weight:600;">View on Amtraker ↗</a>
-          <a href="${transitDocsURL}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 10px;background:#475569;color:white;border-radius:12px;text-decoration:none;font-weight:600;">TransitDocs ↗</a>
         </div>
       </div>
     `;
