@@ -435,6 +435,21 @@ const App = {
       UI.openChangeLocation();
     });
 
+    // Suggested locations in change-location modal
+    document.querySelectorAll('#modal-suggested-locations .suggested-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const lat = parseFloat(card.dataset.lat);
+        const lon = parseFloat(card.dataset.lon);
+        const name = card.dataset.name;
+        const settings = Storage.getSettings();
+        Location.save(name, lat, lon, settings.radius);
+        Location.setActive(name);
+        UI.closeChangeLocation();
+        this.stationsCache = null;
+        this.start({ name, lat, lon, radius: settings.radius });
+      });
+    });
+
     UI.elements.menuSettings?.addEventListener('click', () => {
       UI.elements.settingsDropdown?.classList.add('hidden');
       UI.openSettings();
