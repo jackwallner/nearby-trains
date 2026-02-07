@@ -174,12 +174,14 @@
 
     #location-tabs {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 16px;
     }
 
     .location-tab {
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--bg-card);
@@ -187,12 +189,73 @@
       font-size: 13px;
       color: var(--text-secondary);
       transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .location-tab:hover {
+      background: var(--bg-hover);
     }
 
     .location-tab.active {
       background: var(--accent);
       color: white;
       border-color: var(--accent);
+    }
+
+    .location-tab.add-tab {
+      border-style: dashed;
+      color: var(--text-muted);
+      font-size: 15px;
+      padding: 4px 12px;
+    }
+
+    .location-tab.add-tab:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .location-tab .delete-loc {
+      margin-left: 6px;
+      opacity: 0.4;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .location-tab .delete-loc:hover {
+      opacity: 1;
+      color: var(--danger);
+    }
+
+    /* Quick add location bar */
+    #quick-add-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 16px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    #quick-add-bar input {
+      flex: 1;
+      padding: 8px 14px;
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+    }
+
+    #quick-add-bar input:focus {
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    #quick-add-results {
+      margin-bottom: 12px;
+    }
+
+    #quick-add-results .saved-location-card {
+      margin-bottom: 4px;
     }
 
     /* Stats Grid */
@@ -851,6 +914,8 @@
 
       <!-- Location Tabs -->
       <div id="location-tabs"></div>
+      <div id="quick-add-bar" class="hidden"></div>
+      <div id="quick-add-results"></div>
 
       <!-- Stats -->
       <div class="stats-grid">
