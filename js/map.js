@@ -27,10 +27,12 @@ const MapManager = {
 
     if (provider === 'brightline') { color = '#eab308'; }
     else if (provider === 'via') { color = '#dc2626'; }
+    else if (provider === 'lirr') { color = '#0039A6'; } // MTA blue
+    else if (provider === 'metro-north') { color = '#125EA0'; } // Metro-North teal-blue
     else { color = '#2563eb'; }
 
-    // Use iconColor for on-time status
-    if (train.iconColor) color = train.iconColor;
+    // Use iconColor for on-time status (skip for MTA trains which use fixed brand colors)
+    if (train.iconColor && !train._mtaSource) color = train.iconColor;
 
     const size = isClosest ? 36 : 28;
     const borderWidth = isClosest ? 3 : 2;
@@ -240,26 +242,37 @@ const MapManager = {
     const speed = train.velocity ? `${Math.round(train.velocity)} mph` : 'Stopped';
     const distance = train.distance !== undefined ? Tracker.formatDistance(train.distance) : '';
 
-    const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
+    const isMTA = !!train._mtaSource;
+    const amtrakerURL = isMTA ? null : AmtrakerClient.getAmtrakerURL(train);
+    const emoji = isMTA ? '🚇' : AmtrakerClient.getProviderEmoji(train);
+    const providerLabel = train.provider || 'Amtrak';
+
+    let routeRow = '';
+    if (!isMTA && (train.origName || train.destName)) {
+      routeRow = `<div>🛤️ ${train.origName || '?'} → ${train.destName || '?'}</div>`;
+    }
+
+    let linkRow = '';
+    if (amtrakerURL) {
+      linkRow = `<a href="${amtrakerURL}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 10px;background:#2563eb;color:white;border-radius:12px;text-decoration:none;font-weight:600;">View on Amtraker ↗</a>`;
+    }
 
     return `
       <div style="min-width: 220px; font-family: system-ui, sans-serif;">
         <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">
-          ${AmtrakerClient.getProviderEmoji(train)} ${train.routeName || 'Unknown'}
+          ${emoji} ${train.routeName || 'Unknown'}
         </div>
         <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-          Train #${train.trainNum} · ${train.provider || 'Amtrak'}
+          Train #${train.trainNum} · ${providerLabel}
         </div>
         <div style="font-size: 12px; line-height: 1.6;">
           <div>📍 ${distance} away</div>
           <div>🚄 ${speed} · ${train.heading || '—'}</div>
           <div>📊 ${status}</div>
-          <div>🔜 Next: ${nextStationText}</div>
-          <div>🛤️ ${train.origName || '?'} → ${train.destName || '?'}</div>
+          ${isMTA ? '' : `<div>🔜 Next: ${nextStationText}</div>`}
+          ${routeRow}
         </div>
-        <div style="display:flex;gap:6px;margin-top:8px;">
-          <a href="${amtrakerURL}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 10px;background:#2563eb;color:white;border-radius:12px;text-decoration:none;font-weight:600;">View on Amtraker ↗</a>
-        </div>
+        ${linkRow ? `<div style="display:flex;gap:6px;margin-top:8px;">${linkRow}</div>` : ''}
       </div>
     `;
   },

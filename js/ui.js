@@ -95,6 +95,8 @@ const UI = {
       settingAmtrak: document.getElementById('setting-amtrak'),
       settingVia: document.getElementById('setting-via'),
       settingBrightline: document.getElementById('setting-brightline'),
+      settingLirr: document.getElementById('setting-lirr'),
+      settingMetroNorth: document.getElementById('setting-metro-north'),
       settingNightPause: document.getElementById('setting-night-pause'),
       settingNightStart: document.getElementById('setting-night-start'),
       settingNightEnd: document.getElementById('setting-night-end'),
@@ -273,20 +275,25 @@ const UI = {
     }
 
     // Status badge
-    const statusText = AmtrakerClient.getStatusText(train);
+    const isMTA = !!(train._mtaSource);
+    const statusText = isMTA ? (train.trainState || 'Active') : AmtrakerClient.getStatusText(train);
     if (this.elements.heroStatusBadge) {
       this.elements.heroStatusBadge.textContent = statusText;
-      const color = AmtrakerClient.getStatusColor(train);
+      const color = isMTA ? '#0039A6' : AmtrakerClient.getStatusColor(train);
       this.elements.heroStatusBadge.style.background = color;
     }
 
     // Route links
     const heroLinks = document.getElementById('hero-links');
     if (heroLinks) {
-      const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
-      heroLinks.innerHTML = `
-        <a href="${amtrakerURL}" target="_blank" rel="noopener" class="btn btn-primary btn-small" style="text-decoration:none;font-size:13px;">🔗 View on Amtraker ↗</a>
-      `;
+      if (isMTA) {
+        heroLinks.innerHTML = `<span style="font-size:12px;color:var(--text-muted);">🚇 ${train.provider} commuter rail</span>`;
+      } else {
+        const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
+        heroLinks.innerHTML = `
+          <a href="${amtrakerURL}" target="_blank" rel="noopener" class="btn btn-primary btn-small" style="text-decoration:none;font-size:13px;">🔗 View on Amtraker ↗</a>
+        `;
+      }
     }
   },
 
@@ -358,16 +365,29 @@ const UI = {
     container.innerHTML = history
       .sort((a, b) => b.firstSeen - a.firstSeen)
       .slice(0, 30)
-      .map(entry => `
+      .map(entry => {
+        const isMTA = (entry.trainID || '').startsWith('mta-');
+        const iconBg = entry.provider === 'Brightline' ? '#eab308'
+          : entry.provider === 'Via' ? '#dc2626'
+          : isMTA ? '#0039A6'
+          : '#2563eb';
+        const emoji = isMTA ? '🚇' : AmtrakerClient.getProviderEmoji(entry);
+        const routeInfo = isMTA
+          ? `#${entry.trainNum} · ${entry.provider || 'MTA'}`
+          : `#${entry.trainNum} · ${entry.provider || 'Amtrak'} · ${entry.origName || '?'} → ${entry.destName || '?'}`;
+        const linkHtml = isMTA ? '' :
+          `<span class="train-route"><a href="${entry.trainID && entry.trainID.includes('-') ? `https://amtraker.com/trains/${entry.trainID.split('-')[0]}/${entry.trainID.split('-')[1]}` : `https://amtraker.com/trains/${entry.trainNum}`}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route ↗</a></span>`;
+
+        return `
         <div class="train-item">
           <div class="train-item-left">
-            <div class="train-icon" style="background: ${entry.provider === 'Brightline' ? '#eab308' : entry.provider === 'Via' ? '#dc2626' : '#2563eb'};">
-              ${AmtrakerClient.getProviderEmoji(entry)}
+            <div class="train-icon" style="background: ${iconBg};">
+              ${emoji}
             </div>
             <div class="train-info">
               <span class="train-name">${entry.routeName || 'Unknown'}</span>
-              <span class="train-route">#${entry.trainNum} · ${entry.provider || 'Amtrak'} · ${entry.origName || '?'} → ${entry.destName || '?'}</span>
-              <span class="train-route"><a href="${entry.trainID && entry.trainID.includes('-') ? `https://amtraker.com/trains/${entry.trainID.split('-')[0]}/${entry.trainID.split('-')[1]}` : `https://amtraker.com/trains/${entry.trainNum}`}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route ↗</a></span>
+              <span class="train-route">${routeInfo}</span>
+              ${linkHtml}
             </div>
           </div>
           <div class="train-item-right">
@@ -375,7 +395,8 @@ const UI = {
             <div class="train-speed">${Tracker.timeAgo(entry.lastSeen)}</div>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
   },
 
   /**
@@ -539,6 +560,8 @@ const UI = {
       if (this.elements.settingAmtrak) this.elements.settingAmtrak.checked = settings.providers.amtrak;
       if (this.elements.settingVia) this.elements.settingVia.checked = settings.providers.via;
       if (this.elements.settingBrightline) this.elements.settingBrightline.checked = settings.providers.brightline;
+      if (this.elements.settingLirr) this.elements.settingLirr.checked = settings.providers.lirr;
+      if (this.elements.settingMetroNorth) this.elements.settingMetroNorth.checked = settings.providers.metroNorth;
       if (this.elements.settingNightPause) this.elements.settingNightPause.checked = settings.nightPause || false;
     }
   },
