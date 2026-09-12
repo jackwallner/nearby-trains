@@ -30,6 +30,3 @@ python -m http.server 8000
 - No frameworks, no build tools — keep it simple.
 - ES6 modules with clean separation of concerns.
 - Mobile-friendly responsive design.
-
-## Subagent delegation
-Follow the global CLAUDE.md subagent rules: ask Jack for the model before spawning, spawn at most one at a time unless Jack explicitly approves more, and never allow a subagent to spawn another subagent.
