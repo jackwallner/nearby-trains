@@ -10,9 +10,9 @@ Real-time tracker for Amtrak, VIA Rail, and Brightline trains. Shows live train 
 - **Hosting:** GitHub Pages (static site)
 
 ## Structure
-- `index.html` — Single-page app entry
-- `js/` — ES6 modules (storage, API client, geolocation, tracker, map, UI, app controller)
-- `css/` — Stylesheets
+- `index.html`: Single-page app entry
+- `js/`: ES6 modules (storage, API client, geolocation, tracker, map, UI, app controller)
+- `css/`: Stylesheets
 
 ## Features
 - Live train position tracking on interactive map
