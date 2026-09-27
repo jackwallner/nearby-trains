@@ -27,6 +27,6 @@ python -m http.server 8000
 ```
 
 ## Conventions
-- No frameworks, no build tools — keep it simple.
+- Keep it simple: no frameworks or build tools.
 - ES6 modules with clean separation of concerns.
 - Mobile-friendly responsive design.
