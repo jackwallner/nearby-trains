@@ -37,10 +37,7 @@ const Tracker = {
     const trainsWithDistance = trains.map(train => ({
       ...train,
       distance: AmtrakerClient.haversineDistance(userLat, userLon, train.lat, train.lon),
-      bearing: Location.getBearing(userLat, userLon, train.lat, train.lon),
-      bearingArrow: Location.getBearingArrow(
-        Location.getBearing(userLat, userLon, train.lat, train.lon)
-      )
+      bearing: Location.getBearing(userLat, userLon, train.lat, train.lon)
     }));
 
     // Filter nearby trains
@@ -59,7 +56,7 @@ const Tracker = {
 
       // Closest approach detection
       if (prevDistance !== undefined && train.distance > prevDistance) {
-        // Train is now moving away — previous distance was the closest approach
+        // Train is now moving away - previous distance was the closest approach
         train.closestApproach = prevDistance;
       }
 
@@ -131,7 +128,7 @@ const Tracker = {
     const added = Storage.addSpotting(spottingData);
     if (added) {
       this.session.spotted++;
-      // ✨ Confetti burst for newly spotted train!
+      // Confetti burst for newly spotted train!
       if (typeof Effects !== 'undefined') {
         Effects.celebrateNewTrain();
       }
@@ -211,7 +208,7 @@ const Tracker = {
    * Format distance for display
    */
   formatDistance(miles) {
-    if (miles === null || miles === undefined) return '—';
+    if (miles === null || miles === undefined) return '--';
     if (miles < 0.1) return `${Math.round(miles * 5280)} ft`;
     if (miles < 1) return `${miles.toFixed(2)} mi`;
     if (miles < 10) return `${miles.toFixed(1)} mi`;

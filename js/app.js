@@ -35,14 +35,14 @@ const App = {
       }
     });
 
-    if (added > 0) console.log(`🚉 Added ${added} hub locations`);
+    if (added > 0) console.log(`Added ${added} hub locations`);
   },
 
   /**
    * Initialize the application
    */
   async init() {
-    console.log('🚂 Dick Wallner Train Tracker initializing...');
+    console.log('Dick Wallner Train Tracker initializing...');
 
     // Cache DOM elements
     UI.cacheElements();
@@ -73,14 +73,14 @@ const App = {
     // Mark as visited
     Storage.markVisited();
 
-    console.log('🚂 Dick Wallner Train Tracker ready!');
+    console.log('Dick Wallner Train Tracker ready!');
   },
 
   /**
    * Start tracking at a given location
    */
   async start(location) {
-    console.log(`📍 Starting at: ${location.name} (${location.lat}, ${location.lon})`);
+    console.log(`Starting at: ${location.name} (${location.lat}, ${location.lon})`);
 
     // Cancel any in-flight refresh and stop old timers
     this.stopRefresh();
@@ -119,11 +119,11 @@ const App = {
   },
 
   /**
-   * Main refresh cycle — fetch trains and update everything
+   * Main refresh cycle - fetch trains and update everything
    */
   async refresh(forceLocation) {
     if (this.isRefreshing) {
-      console.log('⚠️ Refresh already in progress, skipping');
+      console.log('Refresh already in progress, skipping');
       return;
     }
     this.isRefreshing = true;
@@ -139,7 +139,7 @@ const App = {
       return;
     }
 
-    console.log(`📍 Refreshing for: ${activeLocation.name} (${activeLocation.lat}, ${activeLocation.lon})`);
+    console.log(`Refreshing for: ${activeLocation.name} (${activeLocation.lat}, ${activeLocation.lon})`);
 
     const settings = Storage.getSettings();
 
@@ -161,7 +161,7 @@ const App = {
 
       // If location changed while we were fetching, discard results
       if (myGeneration !== this.refreshGeneration) {
-        console.log('⏭️ Discarding stale refresh (location changed)');
+        console.log('Discarding stale refresh (location changed)');
         this.isRefreshing = false;
         return;
       }
@@ -211,7 +211,7 @@ const App = {
         : `${trains.length} active · ${Effects.getIdlePhrase()}`;
       UI.setStatus('active', statusMsg);
 
-      // ✨ Celebration effects
+      // Celebration effects
       if (trainCount > 0) {
         Effects.celebrateTrains(trainCount);
       }
@@ -221,7 +221,7 @@ const App = {
         Effects.celebrateNewTrain();
       }
 
-      console.log(`🔄 Refresh complete: ${trainCount} nearby, ${trains.length} total`);
+      console.log(`Refresh complete: ${trainCount} nearby, ${trains.length} total`);
 
     } catch (error) {
       if (myGeneration !== this.refreshGeneration) {
@@ -319,7 +319,7 @@ const App = {
         this.stationsCache = null;
         this.start({ name, lat: loc.lat, lon: loc.lon, radius: loc.radius });
       },
-      // onAdd — show the quick-add bar
+      // onAdd - show the quick-add bar
       () => {
         UI.showQuickAdd();
         this.bindQuickAdd();
@@ -395,7 +395,7 @@ const App = {
     cancelBtn?.addEventListener('click', () => UI.hideQuickAdd());
 
     gpsBtn?.addEventListener('click', async () => {
-      gpsBtn.textContent = '⏳';
+      gpsBtn.textContent = '...';
       try {
         const pos = await Location.getCurrentPosition();
         const name = await Location.reverseGeocode(pos.lat, pos.lon);
@@ -406,7 +406,7 @@ const App = {
         this.stationsCache = null;
         this.start({ name, lat: pos.lat, lon: pos.lon, radius: settings.radius });
       } catch (err) {
-        gpsBtn.textContent = '📍';
+        gpsBtn.textContent = 'GPS';
         UI.showToast(err.message, 'error');
       }
     });
@@ -421,12 +421,12 @@ const App = {
     // Use current location button
     UI.elements.btnUseLocation?.addEventListener('click', async () => {
       const btn = UI.elements.btnUseLocation;
-      btn.textContent = '📍 Getting location...';
+      btn.textContent = 'Getting location...';
       btn.disabled = true;
 
       try {
         const pos = await Location.getCurrentPosition();
-        btn.textContent = '📍 Found! Getting name...';
+        btn.textContent = 'Found! Getting name...';
 
         const name = await Location.reverseGeocode(pos.lat, pos.lon);
         const settings = Storage.getSettings();
@@ -437,7 +437,7 @@ const App = {
         this.start({ name, lat: pos.lat, lon: pos.lon, radius: settings.radius });
 
       } catch (error) {
-        btn.textContent = '📍 Use My Current Location';
+        btn.textContent = 'Use My Current Location';
         btn.disabled = false;
         UI.showToast(error.message, 'error');
       }
@@ -503,7 +503,7 @@ const App = {
       this.refresh();
     });
 
-    // Settings gear — toggle dropdown
+    // Settings gear - toggle dropdown
     UI.elements.btnSettings?.addEventListener('click', (e) => {
       e.stopPropagation();
       UI.elements.settingsDropdown?.classList.toggle('hidden');
@@ -658,7 +658,7 @@ const App = {
     // Use current location in modal
     UI.elements.btnUseLocationModal?.addEventListener('click', async () => {
       const btn = UI.elements.btnUseLocationModal;
-      btn.textContent = '📍 Getting location...';
+      btn.textContent = 'Getting location...';
       btn.disabled = true;
 
       try {
@@ -671,7 +671,7 @@ const App = {
         this.stationsCache = null;
         this.start({ name, lat: pos.lat, lon: pos.lon, radius: settings.radius });
       } catch (error) {
-        btn.textContent = '📍 Use Current Location';
+        btn.textContent = 'Use Current Location';
         btn.disabled = false;
         UI.showToast(error.message, 'error');
       }

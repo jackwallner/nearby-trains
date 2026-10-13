@@ -3,6 +3,8 @@
  * Handles all DOM rendering, stats updates, train cards, history, and status
  */
 
+const TRAIN_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5V21h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>';
+
 const UI = {
   // Cached DOM elements
   elements: {},
@@ -201,8 +203,8 @@ const UI = {
     bar.innerHTML = `
       <input type="text" id="quick-add-input" placeholder="Search city or enter coordinates..." autofocus>
       <button class="btn btn-primary btn-small" id="quick-add-search">Add</button>
-      <button class="btn btn-small" id="quick-add-gps" title="Use GPS">📍</button>
-      <button class="btn btn-small" id="quick-add-cancel">✕</button>
+      <button class="btn btn-small" id="quick-add-gps" title="Use GPS">GPS</button>
+      <button class="btn btn-small" id="quick-add-cancel">&times;</button>
     `;
 
     // Focus the input
@@ -240,7 +242,7 @@ const UI = {
     if (this.elements.closestToday) {
       this.elements.closestToday.textContent = stats.closestDistance !== null
         ? Tracker.formatDistance(stats.closestDistance)
-        : '—';
+        : '--';
     }
     if (this.elements.avgSpeed) {
       if (typeof Effects !== 'undefined' && stats.avgSpeed !== null) {
@@ -248,7 +250,7 @@ const UI = {
       } else {
         this.elements.avgSpeed.textContent = stats.avgSpeed !== null
           ? `${stats.avgSpeed}`
-          : '—';
+          : '--';
       }
     }
     if (this.elements.spottedCount) {
@@ -276,14 +278,14 @@ const UI = {
     if (this.elements.heroProvider) this.elements.heroProvider.textContent = train.provider || 'Amtrak';
     if (this.elements.heroDistance) this.elements.heroDistance.textContent = Tracker.formatDistance(train.distance);
     if (this.elements.heroSpeed) this.elements.heroSpeed.textContent = train.velocity ? Math.round(train.velocity) : '0';
-    if (this.elements.heroHeading) this.elements.heroHeading.textContent = `${train.bearingArrow || ''} ${train.bearing || train.heading || '—'}`;
+    if (this.elements.heroHeading) this.elements.heroHeading.textContent = `${train.bearing || train.heading || '--'}`;
     if (this.elements.heroOrigin) this.elements.heroOrigin.textContent = train.origName || '?';
     if (this.elements.heroDestination) this.elements.heroDestination.textContent = train.destName || '?';
 
     // Next station
     const nextStation = AmtrakerClient.getNextStation(train);
     if (this.elements.heroNextStation) {
-      this.elements.heroNextStation.textContent = nextStation ? nextStation.name : '—';
+      this.elements.heroNextStation.textContent = nextStation ? nextStation.name : '--';
     }
 
     // Status badge
@@ -299,11 +301,11 @@ const UI = {
     const heroLinks = document.getElementById('hero-links');
     if (heroLinks) {
       if (isMTA) {
-        heroLinks.innerHTML = `<span style="font-size:12px;color:var(--text-muted);">🚇 ${train.provider} commuter rail</span>`;
+        heroLinks.innerHTML = `<span style="font-size:12px;color:var(--text-muted);">${train.provider} commuter rail</span>`;
       } else {
         const amtrakerURL = AmtrakerClient.getAmtrakerURL(train);
         heroLinks.innerHTML = `
-          <a href="${amtrakerURL}" target="_blank" rel="noopener" class="btn btn-primary btn-small" style="text-decoration:none;font-size:13px;">🔗 View on Amtraker ↗</a>
+          <a href="${amtrakerURL}" target="_blank" rel="noopener" class="btn btn-primary btn-small" style="text-decoration:none;font-size:13px;">View on Amtraker →</a>
         `;
       }
     }
@@ -341,7 +343,7 @@ const UI = {
     container.innerHTML = stations.slice(0, 10).map(station => `
       <div class="station-item" data-station-code="${station.code}">
         <div>
-          <div class="station-name">🚉 ${station.name}</div>
+          <div class="station-name">${station.name}</div>
           <div class="station-detail">${station.code} · ${station.trains ? station.trains.length : 0} trains</div>
         </div>
         <div class="station-distance">${Tracker.formatDistance(station.distance)}</div>
@@ -383,18 +385,17 @@ const UI = {
           : entry.provider === 'Via' ? '#dc2626'
           : isMTA ? '#0039A6'
           : '#2563eb';
-        const emoji = isMTA ? '🚇' : AmtrakerClient.getProviderEmoji(entry);
         const routeInfo = isMTA
           ? `#${entry.trainNum} · ${entry.provider || 'MTA'}`
           : `#${entry.trainNum} · ${entry.provider || 'Amtrak'} · ${entry.origName || '?'} → ${entry.destName || '?'}`;
         const linkHtml = isMTA ? '' :
-          `<span class="train-route"><a href="${entry.trainID && entry.trainID.includes('-') ? `https://amtraker.com/trains/${entry.trainID.split('-')[0]}/${entry.trainID.split('-')[1]}` : `https://amtraker.com/trains/${entry.trainNum}`}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route ↗</a></span>`;
+          `<span class="train-route"><a href="${entry.trainID && entry.trainID.includes('-') ? `https://amtraker.com/trains/${entry.trainID.split('-')[0]}/${entry.trainID.split('-')[1]}` : `https://amtraker.com/trains/${entry.trainNum}`}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:11px;">View Route </a></span>`;
 
         return `
         <div class="train-item">
           <div class="train-item-left">
             <div class="train-icon" style="background: ${iconBg};">
-              ${emoji}
+              ${TRAIN_ICON}
             </div>
             <div class="train-info">
               <span class="train-name">${entry.routeName || 'Unknown'}</span>
@@ -504,7 +505,7 @@ const UI = {
       return;
     }
 
-    container.innerHTML = '<h4 style="margin: 12px 0 8px; font-size: 14px;">📌 Saved Locations</h4>';
+    container.innerHTML = '<h4 style="margin: 12px 0 8px; font-size: 14px;">Saved Locations</h4>';
 
     locations.forEach(loc => {
       const div = document.createElement('div');
@@ -512,7 +513,7 @@ const UI = {
       div.style.borderColor = loc.name === activeLocationName ? 'var(--accent)' : '';
       div.innerHTML = `
         <div>
-          <div class="location-name">${loc.name} ${loc.name === activeLocationName ? '✓' : ''}</div>
+          <div class="location-name">${loc.name} ${loc.name === activeLocationName ? '(current)' : ''}</div>
           <div class="location-coords">${Location.formatCoords(loc.lat, loc.lon)} · ${loc.radius || 10} mi</div>
         </div>
       `;

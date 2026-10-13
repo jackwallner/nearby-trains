@@ -83,12 +83,11 @@ const MapManager = {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
         background: var(--bg-secondary, #1e293b);
         border: 2px solid var(--accent-primary, #3b82f6);
         border-radius: 3px;
         cursor: pointer;
-      ">🚉</div>`,
+      "></div>`,
       iconSize: [16, 16],
       iconAnchor: [8, 8],
       popupAnchor: [0, -10]
@@ -150,7 +149,7 @@ const MapManager = {
       zIndexOffset: 1000
     }).addTo(this.map);
 
-    this.userMarker.bindPopup('<strong>📍 Your Location</strong>');
+    this.userMarker.bindPopup('<strong>Your Location</strong>');
 
     // Add detection radius circle
     const settings = Storage.getSettings();
@@ -238,38 +237,37 @@ const MapManager = {
   createTrainPopup(train) {
     const status = AmtrakerClient.getStatusText(train);
     const nextStation = AmtrakerClient.getNextStation(train);
-    const nextStationText = nextStation ? nextStation.name : '—';
+    const nextStationText = nextStation ? nextStation.name : '--';
     const speed = train.velocity ? `${Math.round(train.velocity)} mph` : 'Stopped';
     const distance = train.distance !== undefined ? Tracker.formatDistance(train.distance) : '';
 
     const isMTA = !!train._mtaSource;
     const amtrakerURL = isMTA ? null : AmtrakerClient.getAmtrakerURL(train);
-    const emoji = isMTA ? '🚇' : AmtrakerClient.getProviderEmoji(train);
     const providerLabel = train.provider || 'Amtrak';
 
     let routeRow = '';
     if (!isMTA && (train.origName || train.destName)) {
-      routeRow = `<div>🛤️ ${train.origName || '?'} → ${train.destName || '?'}</div>`;
+      routeRow = `<div>${train.origName || '?'} → ${train.destName || '?'}</div>`;
     }
 
     let linkRow = '';
     if (amtrakerURL) {
-      linkRow = `<a href="${amtrakerURL}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 10px;background:#2563eb;color:white;border-radius:12px;text-decoration:none;font-weight:600;">View on Amtraker ↗</a>`;
+      linkRow = `<a href="${amtrakerURL}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 10px;background:#2563eb;color:white;border-radius:12px;text-decoration:none;font-weight:600;">View on Amtraker →</a>`;
     }
 
     return `
       <div style="min-width: 220px; font-family: system-ui, sans-serif;">
         <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">
-          ${emoji} ${train.routeName || 'Unknown'}
+          ${train.routeName || 'Unknown'}
         </div>
         <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
           Train #${train.trainNum} · ${providerLabel}
         </div>
         <div style="font-size: 12px; line-height: 1.6;">
-          <div>📍 ${distance} away</div>
-          <div>🚄 ${speed} · ${train.heading || '—'}</div>
-          <div>📊 ${status}</div>
-          ${isMTA ? '' : `<div>🔜 Next: ${nextStationText}</div>`}
+          <div>${distance} away</div>
+          <div>${speed} · ${train.heading || '--'}</div>
+          <div>${status}</div>
+          ${isMTA ? '' : `<div>Next: ${nextStationText}</div>`}
           ${routeRow}
         </div>
         ${linkRow ? `<div style="display:flex;gap:6px;margin-top:8px;">${linkRow}</div>` : ''}
@@ -300,7 +298,7 @@ const MapManager = {
       const trainCount = station.trains ? station.trains.length : 0;
       marker.bindPopup(`
         <div style="min-width: 150px; font-family: system-ui, sans-serif;">
-          <div style="font-weight: 700; font-size: 13px;">🚉 ${station.name}</div>
+          <div style="font-weight: 700; font-size: 13px;">${station.name}</div>
           <div style="font-size: 12px; color: #666;">${station.code} · ${Tracker.formatDistance(station.distance)} away</div>
           <div style="font-size: 12px; margin-top: 4px;">${trainCount} train${trainCount !== 1 ? 's' : ''} scheduled</div>
           ${station.address1 ? `<div style="font-size: 11px; color: #888; margin-top: 2px;">${station.address1}</div>` : ''}

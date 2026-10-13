@@ -233,16 +233,6 @@ const AmtrakerClient = {
       return `https://amtraker.com/trains/${parts[0]}/${parts[1]}`;
     }
     return `https://amtraker.com/trains/${train.trainNum}`;
-  },
-
-  /**
-   * Get provider emoji
-   */
-  getProviderEmoji(train) {
-    const provider = (train.provider || '').toLowerCase();
-    if (provider === 'brightline') return '🟡';
-    if (provider === 'via') return '🍁';
-    return '🚆';
   }
 };
 

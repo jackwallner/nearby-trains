@@ -58,16 +58,14 @@ const FeatureRequest = {
       submitBtn.disabled = true;
     }
 
-    const priorityEmoji = { low: '🟢', medium: '🟡', high: '🔴' };
-
     const payload = {
       embeds: [{
-        title: `💡 Feature Request: ${title}`,
+        title: `Feature Request: ${title}`,
         description: description || '_No description provided_',
         color: priority === 'high' ? 0xdc2626 : priority === 'medium' ? 0xf59e0b : 0x16a34a,
         fields: [
-          { name: 'Priority', value: `${priorityEmoji[priority] || '🟡'} ${priority.charAt(0).toUpperCase() + priority.slice(1)}`, inline: true },
-          { name: 'Source', value: '🚂 Dick Wallner Train Tracker', inline: true }
+          { name: 'Priority', value: `${priority.charAt(0).toUpperCase() + priority.slice(1)}`, inline: true },
+          { name: 'Source', value: 'Dick Wallner Train Tracker', inline: true }
         ],
         footer: { text: `Submitted ${new Date().toLocaleString()}` }
       }]
@@ -81,7 +79,7 @@ const FeatureRequest = {
       });
 
       if (response.ok || response.status === 204) {
-        UI.showToast('Feature request submitted! Thanks! 🎉', 'success');
+        UI.showToast('Feature request submitted! Thanks!', 'success');
         this.close();
       } else {
         throw new Error(`Discord returned ${response.status}`);
@@ -90,12 +88,12 @@ const FeatureRequest = {
       console.error('Feature request failed:', error);
       // Save to localStorage for retry
       this.savePending({ title, description, priority, timestamp: Date.now() });
-      UI.showToast('Saved locally — will retry when online', 'info');
+      UI.showToast('Saved locally, will retry when online', 'info');
       this.close();
     }
 
     if (submitBtn) {
-      submitBtn.textContent = '🚀 Submit Request';
+      submitBtn.textContent = 'Submit Request';
       submitBtn.disabled = false;
     }
   },
@@ -124,15 +122,14 @@ const FeatureRequest = {
       const remaining = [];
       for (const req of pending) {
         try {
-          const priorityEmoji = { low: '🟢', medium: '🟡', high: '🔴' };
           const payload = {
             embeds: [{
-              title: `💡 Feature Request: ${req.title}`,
+              title: `Feature Request: ${req.title}`,
               description: req.description || '_No description provided_',
               color: req.priority === 'high' ? 0xdc2626 : req.priority === 'medium' ? 0xf59e0b : 0x16a34a,
               fields: [
-                { name: 'Priority', value: `${priorityEmoji[req.priority] || '🟡'} ${req.priority.charAt(0).toUpperCase() + req.priority.slice(1)}`, inline: true },
-                { name: 'Source', value: '🚂 Dick Wallner Train Tracker', inline: true },
+                { name: 'Priority', value: `${req.priority.charAt(0).toUpperCase() + req.priority.slice(1)}`, inline: true },
+                { name: 'Source', value: 'Dick Wallner Train Tracker', inline: true },
                 { name: 'Originally Submitted', value: new Date(req.timestamp).toLocaleString(), inline: true }
               ],
               footer: { text: `Retried ${new Date().toLocaleString()}` }

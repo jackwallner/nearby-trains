@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dick Wallner Train Tracker</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚂</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%232563eb' d='M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5V21h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z'/></svg>">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -61,7 +61,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
       background: var(--bg-page);
       color: var(--text-primary);
       min-height: 100vh;
@@ -843,9 +843,6 @@
       font-size: 13px;
       margin-top: 4px;
     }
-    .suggested-card .suggested-emoji {
-      font-size: 22px;
-    }
 
     /* Feature request modal */
     .feature-request-modal {
@@ -892,7 +889,7 @@
     /* Padding for status bar */
     body { padding-bottom: 60px; }
 
-    /* ===== ✨ PIZZAZZ EFFECTS ===== */
+    /* ===== EFFECTS ===== */
 
     /* Animated gradient background */
     body::before {
@@ -1220,7 +1217,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    /* Buttons — ripple effect prep & hover glow */
+    /* Buttons, ripple effect prep & hover glow */
     .btn {
       position: relative;
       overflow: hidden;
@@ -1341,13 +1338,7 @@
       box-shadow: 0 8px 24px rgba(37,99,235,0.15);
     }
 
-    .suggested-card .suggested-emoji {
-      transition: transform 0.3s;
-    }
 
-    .suggested-card:hover .suggested-emoji {
-      transform: scale(1.3) rotate(-5deg);
-    }
 
     /* Setup wizard entrance */
     .setup-container {
@@ -1477,15 +1468,15 @@
   <div id="setup-wizard" class="hidden">
     <div class="setup-container animate-in">
       <div class="setup-header">
-        <div class="logo" style="margin: 0 auto 16px;">🚂</div>
+        <div class="logo" style="margin: 0 auto 16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5V21h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
         <h1>Dick Wallner Train Tracker</h1>
-        <p>For a man who was always happiest near a track, a timetable, and a camera 🚂</p>
+        <p>For a man who was always happiest near a track, a timetable, and a camera</p>
         <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">1933 – 2025</p>
       </div>
 
       <!-- Quick Start -->
       <div class="setup-section">
-        <h3>📍 Quick Start</h3>
+        <h3>Quick Start</h3>
         <button id="btn-use-location" class="btn btn-primary btn-block">
           Use My Current Location
         </button>
@@ -1495,7 +1486,7 @@
 
       <!-- Manual Entry -->
       <div class="setup-section">
-        <h3>🗺️ Enter Location</h3>
+        <h3>Enter Location</h3>
         <div class="form-group">
           <label>Search by City or Address</label>
           <div style="display:flex;gap:8px;">
@@ -1532,61 +1523,49 @@
 
       <!-- Saved Locations -->
       <div id="setup-saved-section" class="setup-section hidden">
-        <h3>📌 Saved Locations</h3>
+        <h3>Saved Locations</h3>
         <div id="setup-saved-locations"></div>
       </div>
 
       <!-- Suggested Locations -->
       <div class="setup-section">
-        <h3>🗺️ Popular Train Locations</h3>
+        <h3>Popular Train Locations</h3>
         <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;">Tap a hub to start tracking instantly</p>
         <div class="suggested-grid">
           <div class="suggested-card" data-lat="41.8786" data-lon="-87.6398" data-name="Chicago Union Station">
-            <div class="suggested-emoji">🏙️</div>
             <div class="suggested-name">Chicago</div>
           </div>
           <div class="suggested-card" data-lat="40.7506" data-lon="-73.9935" data-name="NYC Penn Station">
-            <div class="suggested-emoji">🗽</div>
             <div class="suggested-name">NYC Penn</div>
           </div>
           <div class="suggested-card" data-lat="38.8977" data-lon="-77.0365" data-name="Washington DC">
-            <div class="suggested-emoji">🏛️</div>
             <div class="suggested-name">Washington DC</div>
           </div>
           <div class="suggested-card" data-lat="34.0565" data-lon="-118.2340" data-name="LA Union Station">
-            <div class="suggested-emoji">🌴</div>
             <div class="suggested-name">Los Angeles</div>
           </div>
           <div class="suggested-card" data-lat="39.9566" data-lon="-75.1819" data-name="Philadelphia 30th St">
-            <div class="suggested-emoji">🔔</div>
             <div class="suggested-name">Philadelphia</div>
           </div>
           <div class="suggested-card" data-lat="45.5289" data-lon="-122.6765" data-name="Portland OR">
-            <div class="suggested-emoji">🌲</div>
             <div class="suggested-name">Portland</div>
           </div>
           <div class="suggested-card" data-lat="26.1197" data-lon="-80.1448" data-name="Fort Lauderdale">
-            <div class="suggested-emoji">☀️</div>
             <div class="suggested-name">Ft. Lauderdale</div>
           </div>
           <div class="suggested-card" data-lat="38.5845" data-lon="-121.4949" data-name="Sacramento">
-            <div class="suggested-emoji">🏔️</div>
             <div class="suggested-name">Sacramento</div>
           </div>
           <div class="suggested-card" data-lat="42.3662" data-lon="-71.0621" data-name="Boston South Station">
-            <div class="suggested-emoji">🦞</div>
             <div class="suggested-name">Boston</div>
           </div>
           <div class="suggested-card" data-lat="37.4636" data-lon="-122.4286" data-name="Half Moon Bay">
-            <div class="suggested-emoji">🌙</div>
             <div class="suggested-name">Half Moon Bay</div>
           </div>
           <div class="suggested-card" data-lat="37.3688" data-lon="-122.0363" data-name="Sunnyvale">
-            <div class="suggested-emoji">🚀</div>
             <div class="suggested-name">Sunnyvale</div>
           </div>
           <div class="suggested-card" data-lat="40.7282" data-lon="-73.7949" data-name="Queens NY">
-            <div class="suggested-emoji">👑</div>
             <div class="suggested-name">Queens</div>
           </div>
         </div>
@@ -1600,7 +1579,7 @@
       <!-- Header -->
       <div class="header">
         <div class="header-left">
-          <div class="logo" id="header-logo" title="For Dick — 1933–2025">🚂</div>
+          <div class="logo" id="header-logo" title="For Dick (1933-2025)"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5V21h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
           <div>
             <div class="header-title">Dick Wallner Train Tracker</div>
             <div class="header-subtitle">
@@ -1609,14 +1588,14 @@
           </div>
         </div>
         <div class="header-actions">
-          <button id="btn-feature-request" class="btn btn-small" title="Request a Feature">💡</button>
-          <button id="btn-refresh" class="btn btn-small">🔄 Refresh</button>
-          <button id="btn-settings" class="btn btn-small">⚙️</button>
+          <button id="btn-feature-request" class="btn btn-small" title="Request a Feature">Request</button>
+          <button id="btn-refresh" class="btn btn-small">Refresh</button>
+          <button id="btn-settings" class="btn btn-small">Menu</button>
           <div id="settings-dropdown" class="dropdown hidden">
-            <div class="dropdown-item" id="menu-change-location">📍 Change Location</div>
-            <div class="dropdown-item" id="menu-settings">⚙️ Settings</div>
-            <div class="dropdown-item" id="menu-export">📤 Export Data</div>
-            <div class="dropdown-item" id="menu-import">📥 Import Data</div>
+            <div class="dropdown-item" id="menu-change-location">Change Location</div>
+            <div class="dropdown-item" id="menu-settings">Settings</div>
+            <div class="dropdown-item" id="menu-export">Export Data</div>
+            <div class="dropdown-item" id="menu-import">Import Data</div>
           </div>
         </div>
       </div>
@@ -1693,9 +1672,9 @@
       <!-- Map -->
       <div class="map-section">
         <div class="map-header">
-          <h3>🗺️ Train Map</h3>
+          <h3>Train Map</h3>
           <div>
-            <button id="btn-toggle-stations" class="btn btn-small">📍 Stations</button>
+            <button id="btn-toggle-stations" class="btn btn-small">Stations</button>
           </div>
         </div>
         <div id="train-map"></div>
@@ -1704,7 +1683,7 @@
       <!-- Nearby Stations -->
       <div id="stations-section" class="history-section hidden">
         <div class="history-header">
-          <h3>🏛️ Nearby Stations</h3>
+          <h3>Nearby Stations</h3>
           <span class="header-subtitle" id="stations-count">0 stations</span>
         </div>
         <div class="train-list" id="station-list"></div>
@@ -1713,7 +1692,7 @@
       <!-- Spotted Trains Today -->
       <div class="history-section">
         <div class="history-header">
-          <h3>🔭 Trains Spotted Today <span id="history-location-name" style="color: var(--text-muted); font-weight: 400;"></span></h3>
+          <h3>Trains Spotted Today <span id="history-location-name" style="color: var(--text-muted); font-weight: 400;"></span></h3>
           <span class="header-subtitle" id="spotted-count">0 trains</span>
         </div>
         <div class="train-list" id="train-history"></div>
@@ -1725,8 +1704,8 @@
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal">
       <div class="modal-header">
-        <h2>⚙️ Settings</h2>
-        <button id="btn-close-settings-x" class="btn" style="padding: 4px 8px;">✕</button>
+        <h2>Settings</h2>
+        <button id="btn-close-settings-x" class="btn" style="padding: 4px 8px;">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="settings-tab" value="general">
@@ -1757,10 +1736,10 @@
                 <input type="checkbox" id="setting-brightline" checked> Brightline (Florida)
               </label>
               <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
-                <input type="checkbox" id="setting-lirr" checked> 🚇 LIRR (Long Island)
+                <input type="checkbox" id="setting-lirr" checked> LIRR (Long Island)
               </label>
               <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
-                <input type="checkbox" id="setting-metro-north" checked> 🚇 Metro-North (NYC/CT)
+                <input type="checkbox" id="setting-metro-north" checked> Metro-North (NYC/CT)
               </label>
             </div>
           </div>
@@ -1789,14 +1768,14 @@
 
         <div id="tab-data" class="settings-tab hidden">
           <div class="form-group">
-            <button id="btn-export" class="btn btn-block">📤 Export All Data</button>
+            <button id="btn-export" class="btn btn-block">Export All Data</button>
           </div>
           <div class="form-group">
-            <button id="btn-import" class="btn btn-block">📥 Import Data</button>
+            <button id="btn-import" class="btn btn-block">Import Data</button>
             <input type="file" id="import-file" accept=".json" class="hidden">
           </div>
           <div class="form-group">
-            <button id="btn-clear-history" class="btn btn-block" style="color: var(--danger);">🗑️ Clear Spotting History</button>
+            <button id="btn-clear-history" class="btn btn-block" style="color: var(--danger);">Clear Spotting History</button>
           </div>
         </div>
       </div>
@@ -1811,12 +1790,12 @@
   <div id="change-location-modal" class="modal-overlay hidden">
     <div class="modal">
       <div class="modal-header">
-        <h2>📍 Change Location</h2>
-        <button id="btn-close-change-loc-x" class="btn" style="padding: 4px 8px;">✕</button>
+        <h2>Change Location</h2>
+        <button id="btn-close-change-loc-x" class="btn" style="padding: 4px 8px;">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <button id="btn-use-location-modal" class="btn btn-primary btn-block">📍 Use Current Location</button>
+          <button id="btn-use-location-modal" class="btn btn-primary btn-block">Use Current Location</button>
         </div>
         <div class="form-group">
           <label>Search by City</label>
@@ -1829,54 +1808,42 @@
         <div id="modal-saved-locations"></div>
 
         <!-- Popular Hubs -->
-        <h4 style="margin: 16px 0 8px; font-size: 14px;">🗺️ Popular Train Hubs</h4>
+        <h4 style="margin: 16px 0 8px; font-size: 14px;">Popular Train Hubs</h4>
         <div class="suggested-grid" id="modal-suggested-locations">
           <div class="suggested-card" data-lat="41.8786" data-lon="-87.6398" data-name="Chicago Union Station">
-            <div class="suggested-emoji">🏙️</div>
             <div class="suggested-name">Chicago</div>
           </div>
           <div class="suggested-card" data-lat="40.7506" data-lon="-73.9935" data-name="NYC Penn Station">
-            <div class="suggested-emoji">🗽</div>
             <div class="suggested-name">NYC Penn</div>
           </div>
           <div class="suggested-card" data-lat="38.8977" data-lon="-77.0365" data-name="Washington DC">
-            <div class="suggested-emoji">🏛️</div>
             <div class="suggested-name">Washington DC</div>
           </div>
           <div class="suggested-card" data-lat="34.0565" data-lon="-118.2340" data-name="LA Union Station">
-            <div class="suggested-emoji">🌴</div>
             <div class="suggested-name">Los Angeles</div>
           </div>
           <div class="suggested-card" data-lat="39.9566" data-lon="-75.1819" data-name="Philadelphia 30th St">
-            <div class="suggested-emoji">🔔</div>
             <div class="suggested-name">Philadelphia</div>
           </div>
           <div class="suggested-card" data-lat="45.5289" data-lon="-122.6765" data-name="Portland OR">
-            <div class="suggested-emoji">🌲</div>
             <div class="suggested-name">Portland</div>
           </div>
           <div class="suggested-card" data-lat="26.1197" data-lon="-80.1448" data-name="Fort Lauderdale">
-            <div class="suggested-emoji">☀️</div>
             <div class="suggested-name">Ft. Lauderdale</div>
           </div>
           <div class="suggested-card" data-lat="38.5845" data-lon="-121.4949" data-name="Sacramento">
-            <div class="suggested-emoji">🏔️</div>
             <div class="suggested-name">Sacramento</div>
           </div>
           <div class="suggested-card" data-lat="42.3662" data-lon="-71.0621" data-name="Boston South Station">
-            <div class="suggested-emoji">🦞</div>
             <div class="suggested-name">Boston</div>
           </div>
           <div class="suggested-card" data-lat="37.4636" data-lon="-122.4286" data-name="Half Moon Bay">
-            <div class="suggested-emoji">🌙</div>
             <div class="suggested-name">Half Moon Bay</div>
           </div>
           <div class="suggested-card" data-lat="37.3688" data-lon="-122.0363" data-name="Sunnyvale">
-            <div class="suggested-emoji">🚀</div>
             <div class="suggested-name">Sunnyvale</div>
           </div>
           <div class="suggested-card" data-lat="40.7282" data-lon="-73.7949" data-name="Queens NY">
-            <div class="suggested-emoji">👑</div>
             <div class="suggested-name">Queens</div>
           </div>
         </div>
@@ -1891,8 +1858,8 @@
   <div id="feature-request-modal" class="feature-request-modal hidden">
     <div class="feature-request-form">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h3>💡 Request a Feature</h3>
-        <button id="fr-close" class="btn btn-small">✕</button>
+        <h3>Request a Feature</h3>
+        <button id="fr-close" class="btn btn-small">&times;</button>
       </div>
       <div class="form-group">
         <label>Title</label>
@@ -1900,17 +1867,17 @@
       </div>
       <div class="form-group">
         <label>Description (optional)</label>
-        <textarea id="fr-description" placeholder="Describe the feature you'd like to see..."></textarea>
+        <textarea id="fr-description" placeholder="What should it do?"></textarea>
       </div>
       <div class="form-group">
         <label>Priority</label>
         <select id="fr-priority">
-          <option value="low">🟢 Low — Nice to have</option>
-          <option value="medium" selected>🟡 Medium — Would improve experience</option>
-          <option value="high">🔴 High — Really need this</option>
+          <option value="low">Low: nice to have</option>
+          <option value="medium" selected>Medium: would improve experience</option>
+          <option value="high">High: really need this</option>
         </select>
       </div>
-      <button id="fr-submit" class="btn btn-primary btn-block" style="margin-top:12px;">🚀 Submit Request</button>
+      <button id="fr-submit" class="btn btn-primary btn-block" style="margin-top:12px;">Submit Request</button>
     </div>
   </div>
 

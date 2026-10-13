@@ -162,17 +162,6 @@ const Location = {
   },
 
   /**
-   * Get arrow emoji for bearing
-   */
-  getBearingArrow(bearing) {
-    const arrows = {
-      'N': '⬆️', 'NE': '↗️', 'E': '➡️', 'SE': '↘️',
-      'S': '⬇️', 'SW': '↙️', 'W': '⬅️', 'NW': '↖️'
-    };
-    return arrows[bearing] || '📍';
-  },
-
-  /**
    * Get saved locations from storage
    */
   getSaved() {

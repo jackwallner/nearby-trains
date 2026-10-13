@@ -1,9 +1,9 @@
 /**
- * MTA Client — Real-time LIRR & Metro-North train positions
+ * MTA Client - Real-time LIRR & Metro-North train positions
  * Free, no API key, CORS-enabled GTFS-RT protobuf feeds
  *
  * Decodes GTFS-RT vehicle positions from binary protobuf without
- * any external library — the format is simple enough to hand-decode.
+ * any external library - the format is simple enough to hand-decode.
  */
 
 const MTAClient = {
@@ -137,8 +137,8 @@ const MTAClient = {
   //
   // VehiclePosition (MTA uses non-standard field mapping):
   //   field 1 = trip (TripDescriptor, embedded)
-  //   field 2 = position (Position, embedded) — NOTE: standard GTFS-RT puts this at field 3
-  //   field 3 = position (Position) — standard location, checked as fallback
+  //   field 2 = position (Position, embedded) - NOTE: standard GTFS-RT puts this at field 3
+  //   field 3 = position (Position) - standard location, checked as fallback
   //   field 4 = current_status (enum: 0=INCOMING_AT, 1=STOPPED_AT, 2=IN_TRANSIT_TO)
   //   field 5 = timestamp (uint64)
   //   field 7 = stop_id (MTA extension)
@@ -218,7 +218,7 @@ const MTAClient = {
       }
 
       // field 8 = VehicleDescriptor (MTA extension)
-      // field 2 = VehicleDescriptor (standard) — but MTA uses field 2 for Position
+      // field 2 = VehicleDescriptor (standard) - but MTA uses field 2 for Position
       let vehicleId = '', vehicleLabel = '';
       const vehField = vp.get(8); // MTA puts vehicle info here
       if (vehField) {

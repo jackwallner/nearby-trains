@@ -1,5 +1,5 @@
 /**
- * Effects Engine — sparkles, confetti, count-up numbers, ripples, particles
+ * Effects Engine - sparkles, confetti, count-up numbers, ripples, particles
  * Pure visual pizzazz, no functional changes
  */
 
@@ -45,11 +45,11 @@ const Effects = {
     this.initLogoEasterEgg();
 
     // Console tribute
-    console.log('%c🚂 In memory of Richard A. Wallner (1933–2025)', 'font-size:14px;font-weight:bold;color:#3b82f6;');
+    console.log('%cIn memory of Richard A. Wallner (1933–2025)', 'font-size:14px;font-weight:bold;color:#3b82f6;');
     console.log('%c"Always happiest near a track, a timetable, and a camera."', 'font-style:italic;color:#94a3b8;');
     console.log('%cQueens → Columbia → Lockheed → SAIC → Half Moon Bay → ∞', 'color:#94a3b8;');
 
-    console.log('✨ Effects engine initialized');
+    console.log('Effects engine initialized');
   },
 
   /**
@@ -386,7 +386,7 @@ const Effects = {
   _shootingStarTimer: null,
 
   initShootingStars() {
-    // Occasional shooting star — a nod to Talon Gold & Star Wars
+    // Occasional shooting star - a nod to Talon Gold & Star Wars
     const fire = () => {
       const startX = Math.random() * window.innerWidth * 0.6;
       const startY = Math.random() * window.innerHeight * 0.3;
@@ -425,7 +425,7 @@ const Effects = {
         }, i * 30);
       }
 
-      // Schedule next one — random 15-45 seconds
+      // Schedule next one - random 15-45 seconds
       this._shootingStarTimer = setTimeout(fire, 15000 + Math.random() * 30000);
     };
 
@@ -495,7 +495,7 @@ const Effects = {
         this._logoClicks = 0;
         // Show a brief tribute
         if (typeof UI !== 'undefined') {
-          UI.showToast('For Dick — who believed anything could be improved ❤️🚂', 'info', 5000);
+          UI.showToast('For Dick, who believed anything could be improved', 'info', 5000);
         }
         // Confetti rain
         this.confettiRain(3000);
@@ -515,7 +515,7 @@ const Effects = {
     'Camera ready, timetable in hand',
     'The tough guy in the room',
     'Never stopped learning',
-    'Queens to California — and never went back',
+    'Queens to California, and never went back',
     'Sharp mind, unwavering standards',
     'Anything can be improved',
     'Leaving every place better than he found it',
